@@ -1,6 +1,5 @@
 const path = require('path')
 const webpack = require('webpack')
-const DtsBundlePlugin = require('./tools/DtsBundlePlugin')
 
 const isProduction = process.env.npm_lifecycle_event === 'build'
 const libraryName = 'tswebpack'
@@ -30,20 +29,7 @@ const config = {
         exclude: /node_modules/,
       }
     ]
-  },
-  plugins: []
-}
-
-if(isProduction) {
-  config.plugins.push(
-    new DtsBundlePlugin({
-      name: libraryName,
-      main: './src/index.d.ts',
-      out: path.join(__dirname, 'lib', `${libraryName}.d.ts`),
-      removeSource: true,
-      outputAsModuleFolder: true,
-    })
-  )
+  }
 }
 
 module.exports = config

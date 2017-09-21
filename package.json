@@ -3,15 +3,15 @@
   "private": "true",
   "scripts": {
     "start": "webpack --watch --progress",
-    "build": "rimraf lib && webpack -p --progress"
+    "prebuild": "rimraf lib",
+    "build": "webpack -p --progress"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.2.3",
-    "dts-bundle": "^0.7.3",
     "rimraf": "^2.6.2",
     "typescript": "^2.5.2",
     "webpack": "^3.6.0"
   },
   "main": "./lib/tswebpack.js",
-  "types": "./lib/tswebpack.d.ts"
+  "typings": "./lib/types/index.d.ts"
 }
