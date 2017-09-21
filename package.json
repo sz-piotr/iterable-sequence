@@ -1,0 +1,12 @@
+{
+  "name": "ts-webpack2",
+  "private": "true",
+  "scripts": {
+    "start": "webpack --watch"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.2.3",
+    "typescript": "^2.5.2",
+    "webpack": "^3.6.0"
+  }
+}
