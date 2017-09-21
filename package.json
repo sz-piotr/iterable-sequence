@@ -2,7 +2,8 @@
   "name": "ts-webpack2",
   "private": "true",
   "scripts": {
-    "start": "webpack --watch"
+    "start": "webpack --watch --progress",
+    "build": "webpack -p --progress"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.2.3",
