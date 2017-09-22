@@ -4,6 +4,7 @@
     "lib": [ "es2015", "dom" ],
     "noImplicitAny": true,
     "strict": true,
+    "downlevelIteration": true,
     "sourceMap": true,
     "declaration": true,
     "declarationDir": "lib/types"
