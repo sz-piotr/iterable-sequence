@@ -1,17 +1,33 @@
 {
   "name": "ts-webpack2",
   "private": "true",
+  "main": "./lib/tswebpack.js",
+  "typings": "./lib/types/index.d.ts",
   "scripts": {
     "start": "webpack --watch --progress",
     "prebuild": "rimraf lib",
-    "build": "webpack -p --progress"
+    "build": "webpack -p --progress",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
   "devDependencies": {
+    "@types/jest": "^21.1.0",
     "awesome-typescript-loader": "^3.2.3",
+    "jest": "^21.1.0",
     "rimraf": "^2.6.2",
+    "ts-jest": "^21.0.1",
     "typescript": "^2.5.2",
     "webpack": "^3.6.0"
   },
-  "main": "./lib/tswebpack.js",
-  "typings": "./lib/types/index.d.ts"
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/src/.*\\.test.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ]
+  }
 }
