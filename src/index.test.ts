@@ -18,20 +18,45 @@ describe('XIterable', () => {
     })
   })
 
-  describe('XIterable.forEach', () => {
-    it('calls the argument with correct values', () => {
-      const mockFn = jest.fn()
-      new XIterable([1, 2, 3]).forEach(mockFn)
-      expect(mockFn.mock.calls).toEqual([[1], [2], [3]])
-    })
+  test('XIterable.forEach', () => {
+    const mockFn = jest.fn()
+    new XIterable([1, 2, 3]).forEach(mockFn)
+    expect(mockFn.mock.calls).toEqual([[1], [2], [3]])
   })
 
-  describe('XIterable.reduce', () => {
-    it('returns the correct values', () => {
-      const value = new XIterable([1, 2, 3])
-        .reduce((a, b) => a + b)
-      expect(value).toEqual(6)
-    })
+  test('XIterable.reduce', () => {
+    const value = new XIterable([1, 2, 3])
+      .reduce((a, b) => a + b)
+    expect(value).toEqual(6)
+  })
+
+  test('XIterable.map', () => {
+    const value = new XIterable([1, 2, 3])
+      .map(x => x + 1)
+      .collect()
+    expect(value).toEqual([2, 3, 4])
+  })
+
+  test('XIterable.flatMap', () => {
+    const value = new XIterable('banjo')
+      .flatMap(char => [char, char])
+      .collect()
+      .join('')
+    expect(value).toEqual('bbaannjjoo')
+  })
+
+  test('XIterable.filter', () => {
+    const value = range(10)
+      .filter(value => value % 4 === 0)
+      .collect()
+    expect(value).toEqual([0, 4, 8])
+  })
+
+  test('XIterable.take', () => {
+    const value = range(Infinity)
+      .take(3)
+      .collect()
+    expect(value).toEqual([0, 1, 2])
   })
 })
 
@@ -61,6 +86,16 @@ describe('zip', () => {
   it('works with Iterables', () => {
     const value = zip([1, 2, 3], ['a', 'b']).collect()
     expect(value).toEqual([[1, 'a'], [2, 'b']])
+  })
+
+  it('works with XIterables', () => {
+    const value = zip('boom', range(Infinity)).collect()
+    expect(value).toEqual([
+      ['b', 0],
+      ['o', 1],
+      ['o', 2],
+      ['m', 3],
+    ])
   })
 
   it('works with ArrayLikes', () => {

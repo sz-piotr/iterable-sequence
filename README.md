@@ -77,7 +77,10 @@ for(const value of sequence) {
     - [`XIterable.reduce`](#xiterablereduce)
 3. [Transforming values](#transforming-values)
     - [`XIterable.map`](#xiterablemap)
-    - [`XIterable.flatMap`](#xiterableflatMap)
+    - [`XIterable.flatMap`](#xiterableflatmap)
+    - [`XIterable.filter`](#xiterablefilter)
+    - [`XIterable.take`](#xiterabletake)
+
 
 ## Creating iterables
 
@@ -188,12 +191,11 @@ console.log(factorial(5)) // outputs: 120
 Returns a new `XIterable` with values transformed by the function passed as argument.
 
 ```typescript
-import { range } from 'xiterables'
+import { XIterable } from 'xiterables'
 
-const factorial = (value: number) => range(value)
-  .reduce((a, b) => a * b)
-
-console.log(factorial(5)) // outputs: 120 
+const charCodes = new XIterable('ascii')
+  .map(char => char.charCodeAt(0))
+  .forEach(console.log) // outputs: 97, 115, 99, 105, 105
 ```
 
 ### `XIterable.flatMap`
@@ -206,4 +208,35 @@ import { range } from 'xiterables'
 const alternate = range(1, 4)
   .flatMap(value => [value, -value])
   .collect() // [1, -1, 2, -2, 3, -3]
+```
+
+### `XIterable.filter`
+
+Returns a new `XIterable` with values filtered using the function passed as argument. Values will only be part of the resulting sequence if the function returns something truthy (e.g. `true`).
+
+```typescript
+import { XIterable } from 'xiterables'
+
+const noE = new XIterable('cheeseburger')
+  .filter(value => value !== 'e')
+  .collect()
+  .join('')
+
+console.log(noE) // outputs: 'chsburgr'
+```
+
+
+### `XIterable.take`
+
+Returns a new `XIterable` with only the first n or less values, where the count is passed as an argument.
+
+```typescript
+import { range } from 'xiterables'
+
+const geometry = range(Infinity)
+  .map(x => 2 ** x)
+  .take(5)
+  .collect()
+
+console.log(geometry) // outputs: [1, 2, 4, 8, 16]
 ```

@@ -13,6 +13,11 @@ export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable
   = (a, b) => new ZipIterable(a, b)
 
 
+function isIterable(arg: any): arg is Iterable<any> {
+  return arg[Symbol.iterator]
+}
+
+
 export class XIterable<T> implements Iterable<T> {
   *[Symbol.iterator](): Iterator<T> {}
 
@@ -41,6 +46,10 @@ export class XIterable<T> implements Iterable<T> {
 
   filter(fn: (item: T) => boolean): XIterable<T> {
     return new FilterIterable(this, fn)
+  }
+
+  take(count: number): XIterable<T> {
+    return new TakeIterable(this, count)
   }
 
   takeWhile(fn: (item: T) => boolean): XIterable<T> {
@@ -86,11 +95,6 @@ export class XIterable<T> implements Iterable<T> {
       fn(value)
     }
   }
-}
-
-
-function isIterable(arg: any): arg is Iterable<any> {
-  return arg.hasOwnProperty(Symbol.iterator)
 }
 
 
@@ -177,6 +181,25 @@ class FilterIterable<T> extends XIterable<T> {
     for(const value of this.iterable) {
       if(this.fn(value)) {
         yield value
+      }
+    }
+  }
+}
+
+class TakeIterable<T> extends XIterable<T> {
+  constructor(
+    private iterable: Iterable<T>,
+    private count: number
+  ) {
+    super()
+  }
+
+  *[Symbol.iterator]() {
+    let index = 0
+    for(const value of this.iterable) {
+      yield value
+      if(++index >= this.count) {
+        break
       }
     }
   }
