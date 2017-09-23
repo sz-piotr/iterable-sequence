@@ -1,44 +1,44 @@
 export type MaybeIterable<T> = Iterable<T> | ArrayLike<T>
 
 
-export const from: <T> (iterable: MaybeIterable<T>) => AbstractIterable<T>
+export const xiter: <T> (iterable: MaybeIterable<T>) => XIterable<T>
   = (iterable) => new WrappedIterable(iterable)
 
-export const range: (a: number, b?: number, c?: number)  => AbstractIterable<number>
+export const range: (a: number, b?: number, c?: number)  => XIterable<number>
   = (a, b, c) => new RangeIterable(a, b, c)
 
-export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => AbstractIterable<[T, U]>
+export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable<[T, U]>
   = (a, b) => new ZipIterable(a, b)
 
 
-export abstract class AbstractIterable<T> implements Iterable<T> {
+export abstract class XIterable<T> implements Iterable<T> {
   *[Symbol.iterator](): Iterator<T> {}
 
-  map <U> (fn: (item: T) => U): AbstractIterable<U> {
+  map <U> (fn: (item: T) => U): XIterable<U> {
     return new MapIterable(this, fn)
   }
 
-  flatMap <U> (fn: (item: T) => MaybeIterable<U>): AbstractIterable<U> {
+  flatMap <U> (fn: (item: T) => MaybeIterable<U>): XIterable<U> {
     return new FlatMapIterable(this, fn)
   }
 
-  filter (fn: (item: T) => boolean): AbstractIterable<T> {
+  filter (fn: (item: T) => boolean): XIterable<T> {
     return new FilterIterable(this, fn)
   }
 
-  takeWhile (fn: (item: T) => boolean): AbstractIterable<T> {
+  takeWhile (fn: (item: T) => boolean): XIterable<T> {
     return new TakeWhileIterable(this, fn)
   }
 
-  dropWhile (fn: (item: T) => boolean): AbstractIterable<T> {
+  dropWhile (fn: (item: T) => boolean): XIterable<T> {
     return new DropWhileIterable(this, fn)
   }
 
-  zip <U> (iterable: MaybeIterable<U>): AbstractIterable<[T, U]> {
+  zip <U> (iterable: MaybeIterable<U>): XIterable<[T, U]> {
     return new ZipIterable(this, iterable)
   }
 
-  append <U> (iterable: MaybeIterable<U>): AbstractIterable<T | U> {
+  append <U> (iterable: MaybeIterable<U>): XIterable<T | U> {
     return new AppendIterable(this, iterable)
   }
 
@@ -71,7 +71,7 @@ function isIterable(arg: any): arg is Iterable<any> {
 }
 
 
-class WrappedIterable<T> extends AbstractIterable<T> {
+class WrappedIterable<T> extends XIterable<T> {
   constructor(iterable: MaybeIterable<T>) {
     super()
     this[Symbol.iterator] = isIterable(iterable) ?
@@ -85,7 +85,7 @@ class WrappedIterable<T> extends AbstractIterable<T> {
 }
 
 
-class RangeIterable extends AbstractIterable<number> {
+class RangeIterable extends XIterable<number> {
   private start: number
   private stop: number
   private step: number
@@ -116,7 +116,7 @@ class RangeIterable extends AbstractIterable<number> {
 }
 
 
-class MapIterable<T, U> extends AbstractIterable<U> {
+class MapIterable<T, U> extends XIterable<U> {
   constructor(
     private iterable: Iterable<T>,
     private fn: (item: T) => U
@@ -132,7 +132,7 @@ class MapIterable<T, U> extends AbstractIterable<U> {
 }
 
 
-class FlatMapIterable<T, U> extends AbstractIterable<U> {
+class FlatMapIterable<T, U> extends XIterable<U> {
   constructor(
     private iterable: Iterable<T>,
     private fn: (item: T) => MaybeIterable<U>)
@@ -152,7 +152,7 @@ class FlatMapIterable<T, U> extends AbstractIterable<U> {
 }
 
 
-class FilterIterable<T> extends AbstractIterable<T> {
+class FilterIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
     private fn: (item: T) => boolean
@@ -169,7 +169,7 @@ class FilterIterable<T> extends AbstractIterable<T> {
   }
 }
 
-class TakeWhileIterable<T> extends AbstractIterable<T> {
+class TakeWhileIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
     private fn: (item: T) => boolean
@@ -188,7 +188,7 @@ class TakeWhileIterable<T> extends AbstractIterable<T> {
 }
 
 
-class DropWhileIterable<T> extends AbstractIterable<T> {
+class DropWhileIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
     private fn: (item: T) => boolean
@@ -207,7 +207,7 @@ class DropWhileIterable<T> extends AbstractIterable<T> {
 }
 
 
-class ZipIterable<T, U> extends AbstractIterable<[T, U]> {
+class ZipIterable<T, U> extends XIterable<[T, U]> {
   private a: Iterable<T>
   private b: Iterable<U>
 
@@ -232,7 +232,7 @@ class ZipIterable<T, U> extends AbstractIterable<[T, U]> {
 }
 
 
-class AppendIterable<T, U> extends AbstractIterable<T | U> {
+class AppendIterable<T, U> extends XIterable<T | U> {
   b: Iterable<U>
 
   constructor(

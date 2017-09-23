@@ -1,7 +1,7 @@
 {
-  "name": "ts-webpack2",
-  "private": "true",
-  "main": "./lib/tswebpack.js",
+  "name": "xiterables",
+  "version": "0.1.0",
+  "main": "./lib/xiterables.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
     "start": "webpack --watch --progress",

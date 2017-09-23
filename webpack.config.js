@@ -2,14 +2,14 @@ const path = require('path')
 const webpack = require('webpack')
 
 const isProduction = process.env.npm_lifecycle_event === 'build'
-const libraryName = 'tswebpack'
+const libraryName = require('./package').name
 
 const config = {
   entry: './src/index.ts',
   output: {
     filename: `${libraryName}.js`,
     path: path.join(__dirname, 'lib'),
-    library: libraryName,
+    library: 'xi',
     libraryTarget: 'umd',
   },
   devtool: 'source-map',
