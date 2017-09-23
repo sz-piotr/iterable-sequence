@@ -1,3 +1,3 @@
-# IterMagic
+# XIterables
 
-An iterator library for modern JavaScript and TypeScript.
+A utility library for working with iterables in modern JavaScript and TypeScript.
