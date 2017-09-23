@@ -86,6 +86,10 @@ for(const value of sequence) {
 
 ### `XIterable`
 
+```typescript
+class XIterable<T> implements Iterable<T>
+```
+
 This is the class that the library enables you to use. An `XIterable` object is just like a regular `Iterable`. It can be used in `for..of` loops and has a method `@@iterator`. It doesn't however have a `length` property and the elements of the sequence cannot be accessed by index. 
 
 Most `XIterable` objects do not store their values in any way. They instead rely on the iteration protocol to obtain consequent values.
@@ -100,6 +104,12 @@ There are three ways to force the iteration to happen:
 
 ### `XIterable.constructor`
 
+```typescript
+XIterable<T>.constructor(iterable: Iterable<T>)
+XIterable<T>.constructor(iterable: ArrayLike<T>)
+XIterable<T>.constructor()
+```
+
 This is the primary way of obtaining `XIterable` objects used throughout the library. It accepts any existing `Iterable` or `ArrayLike` (numeric keys, length property) object.
 
 ```typescript
@@ -111,6 +121,12 @@ const empty = new XIterable() // no values
 ```
 
 ### `range`
+
+```typescript
+function range(stop: number): XIterable<number>
+function range(start: number, end: number): XIterable<number>
+function range(start: number, next: number, end: number): XIterable<number>
+```
 
 The `range` function is the basic building block that the library provides. It enables the creation of `XIterable` objects whose values follow a linear progression. There are three ways of creating a range:
 
@@ -138,6 +154,11 @@ const descending = range(5, 4, 0) // 5, 4, 3, 2, 1
 
 ### `zip`
 
+```typescript
+function zip<T, U>(a: Iterable<T> | ArrayLike<T>, b: Iterable<U> | ArrayLike<U>): XIterable<[T, U]>
+```
+
+
 The `zip` function allows joining two iterables into one `XIterable`. It's best understood by example.
 
 ```typescript
@@ -152,6 +173,10 @@ The length of the resulting sequence is equal to the length of the shorter of th
 
 ### `XIterable.collect`
 
+```typescript
+XIterable<T>.collect(): T[]
+```
+
 The method enables acquiring a sequence of values from an `XIterable` as a JavaScript `Array`.
 
 ```typescript
@@ -162,6 +187,10 @@ const array = new XIterable([1, 2, 3]).collect() // [1, 2, 3]
 
 ### `XIterable.forEach`
 
+```typescript
+XIterable<T>.forEach(fn: (value: T, index?: number) => any): void
+```
+
 The method calls the argument with every value of the XIterable's sequence.
 
 ```typescript
@@ -171,6 +200,10 @@ range(5).forEach(console.log) // outputs: 0, 1, 2, 3, 4
 ```
 
 ### `XIterable.reduce`
+
+```typescript
+XIterable<T>.reduce(fn: (accumulator: T, currentValue: T) => T): T | undefined
+```
 
 This method reduces the values of the observable to a single value.
 
@@ -188,6 +221,10 @@ console.log(factorial(5)) // outputs: 120
 
 ### `XIterable.map`
 
+```typescript
+XIterable<T>.map<U>(fn: (value: T, index?: number) => U): XIterable<U>
+```
+
 Returns a new `XIterable` with values transformed by the function passed as argument.
 
 ```typescript
@@ -199,6 +236,10 @@ const charCodes = new XIterable('ascii')
 ```
 
 ### `XIterable.flatMap`
+
+```typescript
+XIterable<T>.flatMap<U>(fn: (value: T, index?: number) => Iterable<U> | ArrayLike<U>): XIterable<U>
+```
 
 Returns a new `XIterable` with values transformed by the function passed as argument. The argument function must return an `Iterable` or an `ArrayLike` object. The return value of the function is then flattened into the resulting sequence.
 
@@ -212,23 +253,31 @@ const alternate = range(1, 4)
 
 ### `XIterable.filter`
 
+```typescript
+XIterable<T>.filter(fn: (value: T, index?: number) => boolean): XIterable<T>
+```
+
 Returns a new `XIterable` with values filtered using the function passed as argument. Values will only be part of the resulting sequence if the function returns something truthy (e.g. `true`).
 
 ```typescript
 import { XIterable } from 'xiterables'
 
-const noE = new XIterable('cheeseburger')
-  .filter(value => value !== 'e')
+const everyOther = new XIterable('cheeseburger')
+  .filter((value, index) => index % 2 === 0)
   .collect()
   .join('')
 
-console.log(noE) // outputs: 'chsburgr'
+console.log(everyOther) // outputs: 'cesbre'
 ```
 
 
 ### `XIterable.take`
 
-Returns a new `XIterable` with only the first n or less values, where the count is passed as an argument.
+```typescript
+XIterable<T>.take(count: number): XIterable<T>
+```
+
+Returns a new `XIterable` with only the first n or less values, where the n is the argument.
 
 ```typescript
 import { range } from 'xiterables'

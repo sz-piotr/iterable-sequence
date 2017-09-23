@@ -36,15 +36,15 @@ export class XIterable<T> implements Iterable<T> {
     }
   }
 
-  map<U>(fn: (item: T) => U): XIterable<U> {
+  map<U>(fn: (item: T, index: number) => U): XIterable<U> {
     return new MapIterable(this, fn)
   }
 
-  flatMap<U>(fn: (item: T) => MaybeIterable<U>): XIterable<U> {
+  flatMap<U>(fn: (item: T, index: number) => MaybeIterable<U>): XIterable<U> {
     return new FlatMapIterable(this, fn)
   }
 
-  filter(fn: (item: T) => boolean): XIterable<T> {
+  filter(fn: (item: T, index: number) => boolean): XIterable<T> {
     return new FilterIterable(this, fn)
   }
 
@@ -52,11 +52,11 @@ export class XIterable<T> implements Iterable<T> {
     return new TakeIterable(this, count)
   }
 
-  takeWhile(fn: (item: T) => boolean): XIterable<T> {
+  takeWhile(fn: (item: T, index: number) => boolean): XIterable<T> {
     return new TakeWhileIterable(this, fn)
   }
 
-  dropWhile(fn: (item: T) => boolean): XIterable<T> {
+  dropWhile(fn: (item: T, index: number) => boolean): XIterable<T> {
     return new DropWhileIterable(this, fn)
   }
 
@@ -68,7 +68,7 @@ export class XIterable<T> implements Iterable<T> {
     return new AppendIterable(this, iterable)
   }
 
-  reduce(fn: (accumulator: T, currentValue: T) => T | undefined) {
+  reduce(fn: (accumulator: T, currentValue: T) => T) {
     let result
     let first = true
     for(const value of this) {
@@ -90,9 +90,10 @@ export class XIterable<T> implements Iterable<T> {
     return array
   }
 
-  forEach(fn: (value: T) => any) {
+  forEach(fn: (value: T, index: number) => any) {
+    let index = 0
     for(const value of this) {
-      fn(value)
+      fn(value, index++)
     }
   }
 }
@@ -136,14 +137,15 @@ class RangeIterable extends XIterable<number> {
 class MapIterable<T, U> extends XIterable<U> {
   constructor(
     private iterable: Iterable<T>,
-    private fn: (item: T) => U
+    private fn: (item: T, index: number) => U
   ) {
     super()
   }
 
   *[Symbol.iterator]() {
+    let index = 0
     for(const value of this.iterable) {
-      yield this.fn(value)
+      yield this.fn(value, index++)
     }
   }
 }
@@ -152,14 +154,15 @@ class MapIterable<T, U> extends XIterable<U> {
 class FlatMapIterable<T, U> extends XIterable<U> {
   constructor(
     private iterable: Iterable<T>,
-    private fn: (item: T) => MaybeIterable<U>)
+    private fn: (item: T, index: number) => MaybeIterable<U>)
   {
     super()
   }
 
   *[Symbol.iterator]() {
+    let index = 0
     for(const value of this.iterable) {
-      const result = this.fn(value)
+      const result = this.fn(value, index++)
       const iterable = isIterable(result) ? result : new XIterable(result)
       for(const nestedValue of iterable) {
         yield nestedValue
@@ -172,14 +175,15 @@ class FlatMapIterable<T, U> extends XIterable<U> {
 class FilterIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
-    private fn: (item: T) => boolean
+    private fn: (item: T, index: number) => boolean
   ) {
     super()
   }
 
   *[Symbol.iterator]() {
+    let index = 0
     for(const value of this.iterable) {
-      if(this.fn(value)) {
+      if(this.fn(value, index++)) {
         yield value
       }
     }
@@ -208,14 +212,15 @@ class TakeIterable<T> extends XIterable<T> {
 class TakeWhileIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
-    private fn: (item: T) => boolean
+    private fn: (item: T, index: number) => boolean
   ) {
     super()
   }
 
   *[Symbol.iterator]() {
+    let index = 0
     for(const value of this.iterable) {
-      if(!this.fn(value)) {
+      if(!this.fn(value, index++)) {
         break
       }
       yield value
@@ -227,16 +232,19 @@ class TakeWhileIterable<T> extends XIterable<T> {
 class DropWhileIterable<T> extends XIterable<T> {
   constructor(
     private iterable: Iterable<T>,
-    private fn: (item: T) => boolean
+    private fn: (item: T, index: number) => boolean
   ) {
     super()
   }
 
   *[Symbol.iterator]() {
+    let index = 0
+    let fullfilled = false
     for(const value of this.iterable) {
-      if(this.fn(value)) {
+      if(fullfilled || this.fn(value, index++)) {
         continue
       }
+      fullfilled = true
       yield value
     }
   }

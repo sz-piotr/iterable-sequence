@@ -21,7 +21,7 @@ describe('XIterable', () => {
   test('XIterable.forEach', () => {
     const mockFn = jest.fn()
     new XIterable([1, 2, 3]).forEach(mockFn)
-    expect(mockFn.mock.calls).toEqual([[1], [2], [3]])
+    expect(mockFn.mock.calls).toEqual([[1, 0], [2, 1], [3, 2]])
   })
 
   test('XIterable.reduce', () => {
@@ -32,24 +32,23 @@ describe('XIterable', () => {
 
   test('XIterable.map', () => {
     const value = new XIterable([1, 2, 3])
-      .map(x => x + 1)
+      .map((x, index) => x * index)
       .collect()
-    expect(value).toEqual([2, 3, 4])
+    expect(value).toEqual([0, 2, 6])
   })
 
   test('XIterable.flatMap', () => {
-    const value = new XIterable('banjo')
-      .flatMap(char => [char, char])
+    const value = new XIterable('abc')
+      .flatMap((char, index) => [char, index])
       .collect()
-      .join('')
-    expect(value).toEqual('bbaannjjoo')
+    expect(value).toEqual(['a', 0, 'b', 1, 'c', 2])
   })
 
   test('XIterable.filter', () => {
-    const value = range(10)
-      .filter(value => value % 4 === 0)
+    const value = range(5)
+      .filter((value, index) => value + index < 5)
       .collect()
-    expect(value).toEqual([0, 4, 8])
+    expect(value).toEqual([0, 1, 2])
   })
 
   test('XIterable.take', () => {
