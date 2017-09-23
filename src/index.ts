@@ -4,8 +4,14 @@ export type MaybeIterable<T> = Iterable<T> | ArrayLike<T>
 export const xiter: <T> (iterable: MaybeIterable<T>) => XIterable<T>
   = (iterable) => new WrappedIterable(iterable)
 
-export const range: (a: number, b?: number, c?: number)  => XIterable<number>
-  = (a, b, c) => new RangeIterable(a, b, c)
+
+export function range(stop: number): XIterable<number>
+export function range(start: number, end: number): XIterable<number>
+export function range(start: number, next: number, end: number): XIterable<number>
+export function range(a: number, b?: number, c?: number): XIterable<number> {
+  return new RangeIterable(a, b, c)
+}
+
 
 export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable<[T, U]>
   = (a, b) => new ZipIterable(a, b)
@@ -86,31 +92,35 @@ class WrappedIterable<T> extends XIterable<T> {
 
 
 class RangeIterable extends XIterable<number> {
-  private start: number
+  private start: number = 0
+  private step: number = 1
   private stop: number
-  private step: number
 
   constructor(a: number, b?: number, c?: number) {
     super()
     if(b !== undefined) {
       if(c !== undefined) {
         this.start = a
-        this.step = b
+        this.step = b - a
         this.stop = c
       } else {
         this.start = a
         this.stop = b
       }
     } else {
-      this.start = 0
-      this.step = 1
       this.stop = a
     }
   }
 
   *[Symbol.iterator]() {
-    for(let i = this.start; i < this.stop; i += this.step) {
-      yield i
+    if(this.step > 0) {
+      for(let i = this.start; i < this.stop; i += this.step) {
+        yield i
+      }
+    } else {
+      for(let i = this.start; i > this.stop; i += this.step) {
+        yield i
+      }
     }
   }
 }
