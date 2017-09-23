@@ -37,3 +37,18 @@ describe('range', () => {
     expect(up).toEqual([5, 4, 3, 2, 1])
   })
 })
+
+describe('zip', () => {
+  it('works with Iterables', () => {
+    const value = zip([1, 2, 3], ['a', 'b']).collect()
+    expect(value).toEqual([[1, 'a'], [2, 'b']])
+  })
+
+  it('works with ArrayLikes', () => {
+    const arrayLikeA = { 0: 1, 1: 2, 2: 3, length: 3 }
+    const arrayLikeB = { 0: 'a', 1: 'b', length: 2 }
+
+    const value = zip(arrayLikeA, arrayLikeB).collect()
+    expect(value).toEqual([[1, 'a'], [2, 'b']])
+  })
+})
