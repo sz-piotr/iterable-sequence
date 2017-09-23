@@ -1,18 +1,37 @@
-import { xiter, range, zip } from './index'
+import { XIterable, range, zip } from './index'
 
-describe('xiter', () => {
-  it('works with Iterable', () => {
-    const value = xiter([1, 2, 3]).collect()
-    expect(value).toEqual([1, 2, 3])
+describe('XIterable', () => {
+  describe('XIterable.constructor', () => {
+    it('works with Iterable', () => {
+      const value = new XIterable([1, 2, 3]).collect()
+      expect(value).toEqual([1, 2, 3])
+    })
+
+    it('works with ArrayLike', () => {
+      const value = new XIterable({ 0: 0, 1: 1, length: 2 }).collect()
+      expect(value).toEqual([0, 1])
+    })
+
+    it('works without arguments', () => {
+      const value = new XIterable().collect()
+      expect(value).toEqual([])
+    })
   })
 
-  it('works with ArrayLike', () => {
-    const value = xiter({
-      0: 0,
-      1: 1,
-      length: 2
-    }).collect()
-    expect(value).toEqual([0, 1])
+  describe('XIterable.forEach', () => {
+    it('calls the argument with correct values', () => {
+      const mockFn = jest.fn()
+      new XIterable([1, 2, 3]).forEach(mockFn)
+      expect(mockFn.mock.calls).toEqual([[1], [2], [3]])
+    })
+  })
+
+  describe('XIterable.reduce', () => {
+    it('returns the correct values', () => {
+      const value = new XIterable([1, 2, 3])
+        .reduce((a, b) => a + b)
+      expect(value).toEqual(6)
+    })
   })
 })
 

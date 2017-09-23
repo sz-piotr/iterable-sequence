@@ -1,10 +1,6 @@
 export type MaybeIterable<T> = Iterable<T> | ArrayLike<T>
 
 
-export const xiter: <T> (iterable: MaybeIterable<T>) => XIterable<T>
-  = (iterable) => new WrappedIterable(iterable)
-
-
 export function range(stop: number): XIterable<number>
 export function range(start: number, end: number): XIterable<number>
 export function range(start: number, next: number, end: number): XIterable<number>
@@ -17,38 +13,50 @@ export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable
   = (a, b) => new ZipIterable(a, b)
 
 
-export abstract class XIterable<T> implements Iterable<T> {
+export class XIterable<T> implements Iterable<T> {
   *[Symbol.iterator](): Iterator<T> {}
 
-  map <U> (fn: (item: T) => U): XIterable<U> {
+  constructor(iterable?: MaybeIterable<T>) {
+    if(iterable) {
+      this[Symbol.iterator] = isIterable(iterable) ?
+        () => iterable[Symbol.iterator]() :
+        function* () {
+          for(let i = 0; i < iterable.length; i++) {
+            yield iterable[i]
+          }
+        }
+    }
+  }
+
+  map<U>(fn: (item: T) => U): XIterable<U> {
     return new MapIterable(this, fn)
   }
 
-  flatMap <U> (fn: (item: T) => MaybeIterable<U>): XIterable<U> {
+  flatMap<U>(fn: (item: T) => MaybeIterable<U>): XIterable<U> {
     return new FlatMapIterable(this, fn)
   }
 
-  filter (fn: (item: T) => boolean): XIterable<T> {
+  filter(fn: (item: T) => boolean): XIterable<T> {
     return new FilterIterable(this, fn)
   }
 
-  takeWhile (fn: (item: T) => boolean): XIterable<T> {
+  takeWhile(fn: (item: T) => boolean): XIterable<T> {
     return new TakeWhileIterable(this, fn)
   }
 
-  dropWhile (fn: (item: T) => boolean): XIterable<T> {
+  dropWhile(fn: (item: T) => boolean): XIterable<T> {
     return new DropWhileIterable(this, fn)
   }
 
-  zip <U> (iterable: MaybeIterable<U>): XIterable<[T, U]> {
+  zip<U>(iterable: MaybeIterable<U>): XIterable<[T, U]> {
     return new ZipIterable(this, iterable)
   }
 
-  append <U> (iterable: MaybeIterable<U>): XIterable<T | U> {
+  append<U>(iterable: MaybeIterable<U>): XIterable<T | U> {
     return new AppendIterable(this, iterable)
   }
 
-  reduce (fn: (accumulator: T, currentValue: T) => T | undefined) {
+  reduce(fn: (accumulator: T, currentValue: T) => T | undefined) {
     let result
     let first = true
     for(const value of this) {
@@ -69,25 +77,17 @@ export abstract class XIterable<T> implements Iterable<T> {
     }
     return array
   }
+
+  forEach(fn: (value: T) => any) {
+    for(const value of this) {
+      fn(value)
+    }
+  }
 }
 
 
 function isIterable(arg: any): arg is Iterable<any> {
   return arg.hasOwnProperty(Symbol.iterator)
-}
-
-
-class WrappedIterable<T> extends XIterable<T> {
-  constructor(iterable: MaybeIterable<T>) {
-    super()
-    this[Symbol.iterator] = isIterable(iterable) ?
-      () => iterable[Symbol.iterator]() :
-      function* () {
-        for(let i = 0; i < iterable.length; i++) {
-          yield iterable[i]
-        }
-      }
-  }
 }
 
 
@@ -153,7 +153,7 @@ class FlatMapIterable<T, U> extends XIterable<U> {
   *[Symbol.iterator]() {
     for(const value of this.iterable) {
       const result = this.fn(value)
-      const iterable = isIterable(result) ? result : new WrappedIterable(result)
+      const iterable = isIterable(result) ? result : new XIterable(result)
       for(const nestedValue of iterable) {
         yield nestedValue
       }
@@ -223,8 +223,8 @@ class ZipIterable<T, U> extends XIterable<[T, U]> {
 
   constructor(a: MaybeIterable<T>, b: MaybeIterable<U>) {
     super()
-    this.a = isIterable(a) ? a : new WrappedIterable(a)
-    this.b = isIterable(b) ? b : new WrappedIterable(b)
+    this.a = isIterable(a) ? a : new XIterable(a)
+    this.b = isIterable(b) ? b : new XIterable(b)
   }
 
   *[Symbol.iterator](): Iterator<[T, U]> {
@@ -250,7 +250,7 @@ class AppendIterable<T, U> extends XIterable<T | U> {
     b: MaybeIterable<U>
   ) {
     super()
-    this.b = isIterable(b) ? b : new WrappedIterable(b)
+    this.b = isIterable(b) ? b : new XIterable(b)
   }
 
   *[Symbol.iterator]() {
