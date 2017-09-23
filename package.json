@@ -27,6 +27,7 @@
       "src/**/*.ts",
       "!src/**/*.test.ts"
     ],
+    "mapCoverage": true,
     "testRegex": "/src/.*\\.test.ts$",
     "moduleFileExtensions": [
       "ts",
