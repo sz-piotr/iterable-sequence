@@ -16,6 +16,9 @@ export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable
 export class XIterable<T> implements Iterable<T> {
   *[Symbol.iterator](): Iterator<T> {}
 
+  constructor(iterable: Iterable<T>)
+  constructor(iterable: ArrayLike<T>)
+  constructor()
   constructor(iterable?: MaybeIterable<T>) {
     if(iterable) {
       this[Symbol.iterator] = isIterable(iterable) ?

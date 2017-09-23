@@ -5,7 +5,7 @@ A utility library for working with iterables in modern JavaScript and TypeScript
 ## Core features
 
 1. *Lazy* - values are computed only when they are actually used
-2. *No mutation* - every operation creates new iterables
+2. *No mutation* - functions and methods don't modify their arguments or internal state of their objects
 3. *User friendly API* - methods that you are already familiar with
 4. *Types* - the library was compiled with the `--strict` option
 
@@ -62,7 +62,24 @@ for(const value of sequence) {
 }
 ```
 
-## API
+# API
+
+## Index
+
+1. [Creating iterables](#creating-iterables)
+    - [`XIterable`](#xiterable)
+    - [`XIterable.constructor`](#xiterableconstructor)
+    - [`range`](#range)
+    - [`zip`](#zip)
+2. [Accessing values](#accessing-values)
+    - [`XIterable.collect`](#xiterablecollect)
+    - [`XIterable.forEach`](#xiterableforeach)
+    - [`XIterable.reduce`](#xiterablereduce)
+3. [Transforming values](#transforming-values)
+    - [`XIterable.map`](#xiterablemap)
+    - [`XIterable.flatMap`](#xiterableflatMap)
+
+## Creating iterables
 
 ### `XIterable`
 
@@ -128,6 +145,8 @@ const zipped = zip([1, 2, 3], ['a', 'b']) // [1, 'a'], [2, 'b']
 
 The length of the resulting sequence is equal to the length of the shorter of the sequences.
 
+## Accessing values
+
 ### `XIterable.collect`
 
 The method enables acquiring a sequence of values from an `XIterable` as a JavaScript `Array`.
@@ -159,4 +178,32 @@ const factorial = (value: number) => range(value)
   .reduce((a, b) => a * b)
 
 console.log(factorial(5)) // outputs: 120 
+```
+
+## Transforming values
+
+
+### `XIterable.map`
+
+Returns a new `XIterable` with values transformed by the function passed as argument.
+
+```typescript
+import { range } from 'xiterables'
+
+const factorial = (value: number) => range(value)
+  .reduce((a, b) => a * b)
+
+console.log(factorial(5)) // outputs: 120 
+```
+
+### `XIterable.flatMap`
+
+Returns a new `XIterable` with values transformed by the function passed as argument. The argument function must return an `Iterable` or an `ArrayLike` object. The return value of the function is then flattened into the resulting sequence.
+
+```typescript
+import { range } from 'xiterables'
+
+const alternate = range(1, 4)
+  .flatMap(value => [value, -value])
+  .collect() // [1, -1, 2, -2, 3, -3]
 ```
