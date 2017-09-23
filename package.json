@@ -7,7 +7,7 @@
     "start": "webpack --watch --progress",
     "prebuild": "rimraf lib",
     "build": "webpack -p --progress",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watchAll"
   },
   "devDependencies": {
@@ -23,6 +23,10 @@
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.test.ts"
+    ],
     "testRegex": "/src/.*\\.test.ts$",
     "moduleFileExtensions": [
       "ts",
