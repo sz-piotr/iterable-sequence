@@ -188,7 +188,7 @@ const array = new XIterable([1, 2, 3]).collect() // [1, 2, 3]
 ### `XIterable.forEach`
 
 ```typescript
-XIterable<T>.forEach(fn: (value: T, index?: number) => any): void
+XIterable<T>.forEach(fn: (value: T, index: number) => any): void
 ```
 
 The method calls the argument with every value of the XIterable's sequence.
@@ -222,7 +222,7 @@ console.log(factorial(5)) // outputs: 120
 ### `XIterable.map`
 
 ```typescript
-XIterable<T>.map<U>(fn: (value: T, index?: number) => U): XIterable<U>
+XIterable<T>.map<U>(fn: (value: T, index: number) => U): XIterable<U>
 ```
 
 Returns a new `XIterable` with values transformed by the function passed as argument.
@@ -238,7 +238,7 @@ const charCodes = new XIterable('ascii')
 ### `XIterable.flatMap`
 
 ```typescript
-XIterable<T>.flatMap<U>(fn: (value: T, index?: number) => Iterable<U> | ArrayLike<U>): XIterable<U>
+XIterable<T>.flatMap<U>(fn: (value: T, index: number) => Iterable<U> | ArrayLike<U>): XIterable<U>
 ```
 
 Returns a new `XIterable` with values transformed by the function passed as argument. The argument function must return an `Iterable` or an `ArrayLike` object. The return value of the function is then flattened into the resulting sequence.
@@ -254,7 +254,7 @@ const alternate = range(1, 4)
 ### `XIterable.filter`
 
 ```typescript
-XIterable<T>.filter(fn: (value: T, index?: number) => boolean): XIterable<T>
+XIterable<T>.filter(fn: (value: T, index: number) => boolean): XIterable<T>
 ```
 
 Returns a new `XIterable` with values filtered using the function passed as argument. Values will only be part of the resulting sequence if the function returns something truthy (e.g. `true`).
