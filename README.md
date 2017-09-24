@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/sz-piotr/iterable-sequence.svg?branch=master)](https://travis-ci.org/sz-piotr/iterable-sequence)
 [![Coverage Status](https://coveralls.io/repos/github/sz-piotr/iterable-sequence/badge.svg?branch=master&n=0)](https://coveralls.io/github/sz-piotr/iterable-sequence?branch=master)
 [![License: MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![npm](https://img.shields.io/npm/v/iterable-sequence.svg)](https://www.npmjs.com/package/iterable-sequence)
 
 # Iterable Sequence
 
