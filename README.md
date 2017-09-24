@@ -143,7 +143,7 @@ const infinite = range(Infinity) // 0, 1, 2, 3, ...
 ```
 
 
-# `repeat`
+## `repeat`
 
 ```typescript
 function repeat<T>(sequence: Sequence<T>, times?: number): XIterable<T>
@@ -170,7 +170,7 @@ console.log(values) // outputs: 'abcabcabc'
 ```
 
 
-# `repeatValue`
+## `repeatValue`
 
 ```typescript
 function repeatValue<T>(value: T, times?: number): XIterable<T>
@@ -189,7 +189,7 @@ for(const value of repeatValue(3, 5)) {
 ```
 
 
-# `zip`
+## `zip`
 
 ```typescript
 function zip<T, U>(a: Sequence<T>, b: Sequence<U>): XIterable<[T, U]>
@@ -211,7 +211,7 @@ console.log(thisAndNext) // [[0, 1], [1, 2], [2, 3]]
 ```
 
 
-# `map`
+## `map`
 
 ```typescript
 function map<T, U>(sequence: Sequence<T>, fn: (value: T, index: number) => U): XIterable<U>
