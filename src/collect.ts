@@ -1,9 +1,9 @@
 import { CanBeIterable, asIterable } from './utils'
 import XIterable from './XIterable'
 
-function collect<T>(object: CanBeIterable<T>) {
+function collect<T>(iterable: CanBeIterable<T>) {
+  iterable = asIterable(iterable)
   const result = []
-  const iterable = asIterable(object)
   for(const value of iterable) {
     result.push(value)
   }
