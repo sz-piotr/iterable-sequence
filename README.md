@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sz-piotr/xiterables.svg?branch=master)](https://travis-ci.org/sz-piotr/xiterables)
+
 # XIterables
 
 A utility library for working with iterables in modern JavaScript and TypeScript.
