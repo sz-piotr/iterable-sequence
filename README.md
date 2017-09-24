@@ -14,6 +14,40 @@ A utility library for working with iterables in modern JavaScript and TypeScript
 3. *User friendly API* - intuitive names and exhaustive documentation
 4. *Types* - the library was written in TypeScript and compiled with the `--strict` option
 
+## Installation
+
+The library is published on npm. To use it in your own project run
+```
+npm install --save iterable-sequence
+```
+
+Then you can use the library like so:
+```typescript
+// es2015 or TypeScript
+import { range } from 'iterable-sequence'
+
+for(const value of range(5)) {
+  console.log(value) // outputs: 0, 1, 2, 3, 4
+}
+```
+
+```javascript
+// es5
+var seq = require('iterable-sequence')
+
+var values = seq.range(5).toArray()
+console.log(values) // outputs: 0, 1, 2, 3, 4
+```
+
+You can also use the provided script directly in the browser:
+```html
+<script src="https://cdn.rawgit.com/sz-piotr/iterable-sequence/905ec730/lib/iterable-sequence.js"></script>
+<script>
+  var values = seq.range(5).toArray()
+  console.log(values) // outputs: 0, 1, 2, 3, 4
+</script>
+```
+
 ## Motivation
 
 With the ES2015 specification came the iteration protocol allowing us to write `for..of` loops in JavaScript. However the built in language APIs do not provide some useful features that the use of the protocol enables.
