@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/sz-piotr/Sequences.svg?branch=master)](https://travis-ci.org/sz-piotr/Sequences)
-[![Coverage Status](https://coveralls.io/repos/github/sz-piotr/Sequences/badge.svg?branch=master)](https://coveralls.io/github/sz-piotr/Sequences?branch=master)
+[![Build Status](https://travis-ci.org/sz-piotr/iterable-sequence.svg?branch=master)](https://travis-ci.org/sz-piotr/iterable-sequence)
+[![Coverage Status](https://coveralls.io/repos/github/sz-piotr/iterable-sequence/badge.svg?branch=master)](https://coveralls.io/github/sz-piotr/iterable-sequence?branch=master)
 
-# Sequences
+# Iterable Sequence
 
 A utility library for working with iterables in modern JavaScript and TypeScript.
 
@@ -9,7 +9,7 @@ A utility library for working with iterables in modern JavaScript and TypeScript
 
 1. *Lazy* - values are computed only when they are actually used
 2. *No mutation* - functions and methods don't modify their arguments or internal state of their objects
-3. *User friendly API* - methods that you are already familiar with
+3. *User friendly API* - intuitive names and exhaustive documentation
 4. *Types* - the library was written in TypeScript and compiled with the `--strict` option
 
 ## Motivation
@@ -26,8 +26,10 @@ TODO
 
 ## Index
 
-- [`Collection`](#Collection)
-- [`Sequence`](#Sequence)
+- [`Collection`](#collection)
+- [`Sequence`](#sequence)
+- [`Sequence.toArray`](#sequencetoarray)
+- [`Sequence.join`](#sequencejoin)
 - [`collect`](#collect)
 - [`range`](#range)
 - [`repeat`](#repeat)
@@ -45,7 +47,7 @@ The `Collection` type is used all across the library. Objects of this type repre
 
 The values of a collection can also be collections themselves.
 
-Examples of `Collection` types:
+Examples of `Collection` objects:
 
 ```typescript
 const arrayCollection = [1, 2, 3, 4]
@@ -72,49 +74,57 @@ const generatorCollection = function* () {
 
 ```typescript
 class Sequence<T> implements Iterable<T>
-Sequence<T>.constructor(Collection: Collection<T>)
+Sequence<T>.constructor(collection: Collection<T>)
 ```
 
 The `Sequence` class is the main building block of the library. It encapsulates a `Collection` object allowing for expressing data manipulations in the form of method chaining. 
 
-An `Sequence` Collection is lazy. No values are computed unless you want to use them. This is because `Sequence` uses generator functions internally. This opens up the possibility for infinite seqences as they don't store their values anywhere and compute them on demand.
+An `Sequence` object is lazy. No values are computed unless you want to use them. This is because `Sequence` uses generator functions internally. This opens up the possibility for infinite seqences as they don't store their values anywhere and compute them on demand.
 
-All `Sequence` methods have their equivalents in the form of standalone functions of the same name.
+Most `Sequence` methods have their equivalents in the form of standalone functions of the same name.
 
 To obtain an `Sequence` just use the constructor like so:
 
 ```typescript
-import { Sequence } from 'Sequences'
+import { Sequence } from 'iterable-sequence'
 
 const mySequence = new Sequence([1, 2, 3])
 ```
 
 
-## `collect`
+## `Sequence.toArray`
 
 ```typescript
-function collect<T>(Collection: Collection<T>): T[]
-Sequence<T>.collect(): T[]
+Sequence<T>.toArray(): T[]
 ```
 
-`collect` is a function that allows to retrieve values from a Collection. It iterates over the Collection creating an array of values in the process.
+`.toArray` is a function that allows to retrieve values from a `Sequence`. It iterates over the `Sequence` creating an array of values in the process.
 
 Example:
 
 ```typescript
-import { collect, Sequence } from 'Sequences'
+import { Sequence } from 'iterable-sequence'
 
-const myCollection = function* () {
-  yield 1
-  yield 2
-  yield 3
-}
+const values = new Sequence('abc').toArray()
+console.log(values) // outputs: ['a', 'b', 'c']
+```
 
-const values = collect(myCollection)
-// or
-const values = new Sequence(myCollection).collect()
 
-console.log(values) // outputs: [1, 2, 3]
+## `Sequence.join`
+
+```typescript
+Sequence<T>.join(separator?: string): string
+```
+
+`.join` is a function that concatenates the string representation of the `Sequence` values creating a larger string in the process. When no separator is provided an empty string is used.
+
+Example:
+
+```typescript
+import { Sequence } from 'iterable-sequence'
+
+const value = new Sequence([1, 2, 3]).join('-')
+console.log(value) // outputs: '1-2-3'
 ```
 
 
@@ -126,14 +136,14 @@ function range(start: number, end: number): Sequence<number>
 function range(start: number, next: number, end: number): Sequence<number>
 ```
 
-`range` is used to create Collections whoose values follow a linear progression. This includes creating lists of consecutive integers, all even numbers or counting from 100 to 0.
+`range` is a function that creates a `Sequence` of integer values that follow a linear progression.
 
-The created Collection can also be descending or infinite.
+The created `Sequence` can also be descending or infinite.
 
 Example:
 
 ```typescript
-import { range } from 'Sequences'
+import { range } from 'iterable-sequence'
 
 const oneArgument = range(5) // 0, 1, 2, 3, 4
 const twoArguments = range(2, 5) // 2, 3, 4
@@ -147,27 +157,23 @@ const infinite = range(Infinity) // 0, 1, 2, 3, ...
 ## `repeat`
 
 ```typescript
-function repeat<T>(Collection: Collection<T>, times?: number): Sequence<T>
+function repeat<T>(collection: Collection<T>, times?: number): Sequence<T>
 Sequence<T>.repeat(times?: number): Sequence<T>
 ```
 
-`repeat` is used to create Collections that are a repetition of the one provided as argument. The second argument controls how many times the Collection is repeated. If you omit the argument it defaults to `Infinity`.
+`repeat` creates a `Sequence` with values taken from a given `Collection` and repeated. The second argument controls how many times the `Collection` is repeated. If you omit the argument it defaults to `Infinity`.
 
 Example:
 
 ```typescript
-import { repeat, Sequence } from 'Sequences'
+import { repeat } from 'iterable-sequence'
 
 for(const value of repeat([1, 2])) {
   console.log(value) // outputs: 1, 2, 1, 2, 1, 2, ...
 }
 
-const values = new Sequence('abc')
-  .repeat(3)
-  .collect()
-  .join('')
-
-console.log(values) // outputs: 'abcabcabc'
+const tripleABC = repeat('abc', 3).join()
+console.log(tripleABC) // outputs: 'abcabcabc'
 ```
 
 
@@ -182,7 +188,7 @@ function repeatValue<T>(value: T, times?: number): Sequence<T>
 Example:
 
 ```typescript
-import { repeatValue } from 'Sequences'
+import { repeatValue } from 'iterable-sequence'
 
 for(const value of repeatValue(3, 5)) {
   console.log(value) // outputs: 3, 3, 3, 3, 3
@@ -194,43 +200,43 @@ for(const value of repeatValue(3, 5)) {
 
 ```typescript
 function zip<T, U>(a: Collection<T>, b: Collection<U>): Sequence<[T, U]>
-Sequence<T>.zip<U>(Collection: Collection<U>): Sequence<[T, U]>
+Sequence<T>.zip<U>(collection: Collection<U>): Sequence<[T, U]>
 ```
 
-`zip` is used to join two Collections into one. The resulting Collection consists of pairs of values and has the length of the shorter of the two provided.
+`zip` is used to join two `Collection` objects into one. The resulting `Sequence` consists of pairs of values and has the length of the shorter of the two provided.
 
 Example:
 
 ```typescript
-import { range } from 'Sequences'
+import { zip, range } from 'iterable-sequence'
 
-const thisAndNext = range(3)
-  .zip(range(1, 4))
-  .collect()
+const withIndices = zip('abc', range(Infinity)).toArray()
+console.log(withIndices) // [['a', 0], ['b', 1], ['c', 2]]
 
-console.log(thisAndNext) // [[0, 1], [1, 2], [2, 3]]
+const withIndicesReversed = range(Infinity)
+  .zip('abc')
+  .toArray()
+console.log(withIndicesReversed) // [[0, 'a'], [1, 'b'], [2, 'c']]
 ```
 
 
 ## `map`
 
 ```typescript
-function map<T, U>(Collection: Collection<T>, fn: (value: T, index: number) => U): Sequence<U>
+function map<T, U>(collection: Collection<T>, fn: (value: T, index: number) => U): Sequence<U>
 Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
 ```
 
-`map` is used to replace values in a Collection with the results of the function it receives as an argument.
+`map` creates a `Sequence` which values correspond to the given `Collection` but are transformed by applying the function passed as argument to them.
 
 Example:
 
 ```typescript
-import { map } from 'Sequences'
+import { map } from 'iterable-sequence'
 
-const lettersWithNumbers = map(
-  'abc',
-  (letter, index) => `${letter}-${index}`
-).collect()
+const lettersDashNumbers = map('abc', (letter, index) => `${letter}-${index}`)
+  .toArray()
 
-console.log(lettersWithNumbers) // ['a-1', 'b-2', 'c-3']
+console.log(lettersDashNumbers) // ['a-0', 'b-1', 'c-2']
 ```
 
