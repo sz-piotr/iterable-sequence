@@ -1,4 +1,4 @@
-import XIterable from './XIterable'
+import { XIterable } from '../src'
 
 describe('XIterable', () => {
   it('can be constructed using an Iterable', () => {

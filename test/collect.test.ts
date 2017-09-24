@@ -1,5 +1,4 @@
-import collect from './collect'
-import XIterable from './XIterable'
+import { collect, XIterable } from '../src'
 
 describe('collect', () => {
   it('collects iterables', () => {

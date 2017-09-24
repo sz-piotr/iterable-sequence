@@ -1,5 +1,4 @@
-import zip from './zip'
-import XIterable from './XIterable'
+import { zip, XIterable } from '../src'
 
 describe('zip', () => {
   it('works with iterables', () => {

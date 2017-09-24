@@ -1,4 +1,4 @@
-import range from './range'
+import { range, XIterable } from '../src'
 
 describe('range', () => {
   it('works with a single argument', () => {

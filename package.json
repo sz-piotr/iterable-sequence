@@ -24,11 +24,10 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "collectCoverageFrom": [
-      "src/**/*.ts",
-      "!src/**/*.test.ts"
+      "src/**/*.ts"
     ],
     "mapCoverage": true,
-    "testRegex": "/src/.*\\.test.ts$",
+    "testRegex": "/test/.*\\.test.ts$",
     "moduleFileExtensions": [
       "ts",
       "js",

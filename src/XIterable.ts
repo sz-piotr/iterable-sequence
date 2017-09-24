@@ -2,6 +2,7 @@ import { CanBeIterable, isIterable } from './utils'
 import collect from './collect'
 import zip from './zip'
 import repeat from './repeat'
+import map from './map'
 
 class XIterable<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -30,6 +31,10 @@ class XIterable<T> implements Iterable<T> {
 
   repeat(times?: number) {
     return repeat(this, times)
+  }
+
+  map<U>(fn: (value: T, index: number) => U) {
+    return map(this, fn)
   }
 }
 

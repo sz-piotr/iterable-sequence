@@ -1,5 +1,4 @@
-import repeat, { repeatValue } from './repeat'
-import XIterable from './XIterable'
+import { repeat, repeatValue, XIterable } from '../src'
 
 describe('repeat', () => {
   it('works with iterables', () => {
