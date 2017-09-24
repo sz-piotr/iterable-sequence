@@ -7,15 +7,15 @@ import map from './map'
 class XIterable<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
 
-  constructor(iterable: Sequence<T>) {
-    if(typeof iterable === 'function') {
-      this[Symbol.iterator] = iterable
-    } else if(isIterable(iterable)) {
-      this[Symbol.iterator] = () => iterable[Symbol.iterator]()
+  constructor(sequence: Sequence<T>) {
+    if(typeof sequence === 'function') {
+      this[Symbol.iterator] = sequence
+    } else if(isIterable(sequence)) {
+      this[Symbol.iterator] = () => sequence[Symbol.iterator]()
     } else {
       this[Symbol.iterator] = function* () {
-        for(let i = 0; i < iterable.length; i++) {
-          yield iterable[i]
+        for(let i = 0; i < sequence.length; i++) {
+          yield sequence[i]
         }
       }
     }
@@ -25,8 +25,8 @@ class XIterable<T> implements Iterable<T> {
     return collect(this)
   }
 
-  zip<U>(iterable: Sequence<U>) {
-    return zip(this, iterable)
+  zip<U>(sequence: Sequence<U>) {
+    return zip(this, sequence)
   }
 
   repeat(times?: number) {
