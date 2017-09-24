@@ -1,7 +1,7 @@
-import { CanBeIterable, asIterable } from './utils'
+import { Sequence, asIterable } from './utils'
 import XIterable from './XIterable'
 
-function repeat<T>(iterable: CanBeIterable<T>, times: number = Infinity) {
+function repeat<T>(iterable: Sequence<T>, times: number = Infinity) {
   iterable = asIterable(iterable)
   return new XIterable(function* () {
     for(let i = 0; i < times; i++) {

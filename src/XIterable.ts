@@ -1,4 +1,4 @@
-import { CanBeIterable, isIterable } from './utils'
+import { Sequence, isIterable } from './utils'
 import collect from './collect'
 import zip from './zip'
 import repeat from './repeat'
@@ -7,7 +7,7 @@ import map from './map'
 class XIterable<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
 
-  constructor(iterable: CanBeIterable<T>) {
+  constructor(iterable: Sequence<T>) {
     if(typeof iterable === 'function') {
       this[Symbol.iterator] = iterable
     } else if(isIterable(iterable)) {
@@ -25,7 +25,7 @@ class XIterable<T> implements Iterable<T> {
     return collect(this)
   }
 
-  zip<U>(iterable: CanBeIterable<U>) {
+  zip<U>(iterable: Sequence<U>) {
     return zip(this, iterable)
   }
 

@@ -1,7 +1,7 @@
-import { CanBeIterable, asIterable } from './utils'
+import { Sequence, asIterable } from './utils'
 import XIterable from './XIterable'
 
-function collect<T>(iterable: CanBeIterable<T>) {
+function collect<T>(iterable: Sequence<T>) {
   iterable = asIterable(iterable)
   const result = []
   for(const value of iterable) {

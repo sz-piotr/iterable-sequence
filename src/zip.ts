@@ -1,7 +1,7 @@
-import { CanBeIterable, asIterable } from './utils'
+import { Sequence, asIterable } from './utils'
 import XIterable from './XIterable'
 
-function zip<T, U>(a: CanBeIterable<T>, b: CanBeIterable<U>) {
+function zip<T, U>(a: Sequence<T>, b: Sequence<U>) {
   const aIterable = asIterable(a)
   const bIterable = asIterable(b)
 

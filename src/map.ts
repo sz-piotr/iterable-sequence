@@ -1,7 +1,7 @@
-import { CanBeIterable, asIterable } from './utils'
+import { Sequence, asIterable } from './utils'
 import XIterable from './XIterable'
 
-function map<T, U>(iterable: CanBeIterable<T>, fn: (value: T, index: number) => U) {
+function map<T, U>(iterable: Sequence<T>, fn: (value: T, index: number) => U) {
   iterable = asIterable(iterable)
   return new XIterable(function* () {
     let index = 0
