@@ -44,11 +44,25 @@ describe('repeat', () => {
       expect(value1).toEqual([true, true])
       expect(value2).toEqual(value1)
   })
+
+  it('will work with a single argument', () => {
+    const value1 = repeat([1])
+    const value2 = new XIterable([1])
+      .repeat()
+
+    expect(value1).toBeInstanceOf(XIterable)
+    expect(value2).toBeInstanceOf(XIterable)
+  })
 })
 
 describe('repeatValue', () => {
   it('creates an XIterable with the value repeated', () => {
     const value = repeatValue(1, 5).collect()
     expect(value).toEqual([1, 1, 1, 1, 1])
+  })
+
+  it('will work with a single argument', () => {
+    const value = repeatValue(1)
+    expect(value).toBeInstanceOf(XIterable)
   })
 })
