@@ -1,11 +1,26 @@
 {
   "name": "iterable-sequence",
   "version": "0.1.0",
+  "description": "A utility library for working with iterables in modern JavaScript and TypeScript.",
   "license": "MIT",
+  "author": "Piotr Szlachciak <szlachciak.piotr@gmail.com>",
+  "keywords": [
+    "iterable",
+    "iteration",
+    "sequence",
+    "utility",
+    "javascript",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sz-piotr/iterable-sequence.git"
+  },
   "main": "./lib/iterable-sequence.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
     "start": "webpack --watch --progress",
+    "prepublishOnly": "npm run build",
     "prebuild": "rimraf lib",
     "build": "webpack -p --progress",
     "test": "jest --coverage && cat ./coverage/lcov.info | coveralls",
