@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sz-piotr/xiterables.svg?branch=master)](https://travis-ci.org/sz-piotr/xiterables)
+[![Coverage Status](https://coveralls.io/repos/github/sz-piotr/xiterables/badge.svg?branch=master)](https://coveralls.io/github/sz-piotr/xiterables?branch=master)
 
 # XIterables
 
