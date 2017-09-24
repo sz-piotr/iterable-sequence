@@ -15,52 +15,9 @@ With the ES2015 specification came the iteration protocol allowing us to write `
 
 The fundamental difference between working with iterables and working with arrays is that an iterable does not need an underlying data structure. This opens up the possibility for ranges, infinite sequences, data manipulation without copying entire data structures and many more.
 
-## Use cases
+## Examples
 
-Say you want to know all the even numbers that are not divisible by 3. Here is how you would do it without this library:
-
-```javascript
-for(let i = 0; ; i += 2) {
-  if(i % 3 !== 0) {
-    console.log(i)
-  }
-}
-```
-
-What if you would like to pass that to a function? You would have to somehow store the values you calculated. But this would ultimately limit it to a finite list.
-
-A better aproach would be to use a generator function:
-
-```javascript
-function* evenNotDivisibleBy3() {
-  for(let i = 0; ; i += 2) {
-    if(i % 3 !== 0) {
-      yield i
-    }
-  }
-}
-```
-
-With it you can easily use the sequence later:
-
-```javascript
-for(const value of evenNotDivisibleBy3()) {
-  console.log(value)
-}
-```
-
-Writing generators by hand can be tiresome and the code is not really readable. This is why the library was created. Let's see how to use it in the following example.
-
-```typescript
-import { range } from 'xiterables'
-
-const sequence = range(0, 2, Infinity)
-  .filter(value => value % 3 !== 0)
-
-for(const value of sequence) {
-  console.log(value)
-}
-```
+TODO
 
 # API
 
@@ -80,9 +37,12 @@ for(const value of sequence) {
     - [`XIterable.flatMap`](#xiterableflatmap)
     - [`XIterable.filter`](#xiterablefilter)
     - [`XIterable.take`](#xiterabletake)
+    - [`XIterable.takeWhile`](#xiterabletakewhile)
+    - [`XIterable.dropWhile`](#xiterabledropwhile)
 
 
 ## Creating iterables
+
 
 ### `XIterable`
 
@@ -102,6 +62,7 @@ There are three ways to force the iteration to happen:
 2. By calling `.collect()`
 3. By calling `.reduce()`
 
+
 ### `XIterable.constructor`
 
 ```typescript
@@ -119,6 +80,7 @@ const fromIterable = new XIterable([1, 2, 3]) // 1, 2, 3
 const fromArrayLike = new XIterable({ 0: 'a', 1: 'b', length: 2 }) // 'a', 'b'
 const empty = new XIterable() // no values
 ```
+
 
 ### `range`
 
@@ -152,12 +114,12 @@ const infinite = range(Infinity) // 0, 1, 2, ...
 const descending = range(5, 4, 0) // 5, 4, 3, 2, 1
 ```
 
+
 ### `zip`
 
 ```typescript
 function zip<T, U>(a: Iterable<T> | ArrayLike<T>, b: Iterable<U> | ArrayLike<U>): XIterable<[T, U]>
 ```
-
 
 The `zip` function allows joining two iterables into one `XIterable`. It's best understood by example.
 
@@ -170,6 +132,7 @@ const zipped = zip([1, 2, 3], ['a', 'b']) // [1, 'a'], [2, 'b']
 The length of the resulting sequence is equal to the length of the shorter of the sequences.
 
 ## Accessing values
+
 
 ### `XIterable.collect`
 
@@ -185,6 +148,7 @@ import { XIterable } from 'xiterables'
 const array = new XIterable([1, 2, 3]).collect() // [1, 2, 3]
 ```
 
+
 ### `XIterable.forEach`
 
 ```typescript
@@ -198,6 +162,7 @@ import { range } from 'xiterables'
 
 range(5).forEach(console.log) // outputs: 0, 1, 2, 3, 4
 ```
+
 
 ### `XIterable.reduce`
 
@@ -235,6 +200,7 @@ const charCodes = new XIterable('ascii')
   .forEach(console.log) // outputs: 97, 115, 99, 105, 105
 ```
 
+
 ### `XIterable.flatMap`
 
 ```typescript
@@ -251,13 +217,14 @@ const alternate = range(1, 4)
   .collect() // [1, -1, 2, -2, 3, -3]
 ```
 
+
 ### `XIterable.filter`
 
 ```typescript
 XIterable<T>.filter(fn: (value: T, index: number) => boolean): XIterable<T>
 ```
 
-Returns a new `XIterable` with values filtered using the function passed as argument. Values will only be part of the resulting sequence if the function returns something truthy (e.g. `true`).
+Returns a new `XIterable` with values that satisfy the condition given by the argument.
 
 ```typescript
 import { XIterable } from 'xiterables'
@@ -288,4 +255,44 @@ const geometry = range(Infinity)
   .collect()
 
 console.log(geometry) // outputs: [1, 2, 4, 8, 16]
+```
+
+
+### `XIterable.takeWhile`
+
+```typescript
+XIterable<T>.takeWhile(fn: (value: T, index: number) => boolean): XIterable<T>
+```
+
+Returns a new `XIterable` with the first values that satisfy the condition given by the argument function. When a value that doesn't satisfy the condition is found the sequence ends.
+
+```typescript
+import { zip } from 'xiterables'
+
+const masked = zip([1, 2, 3, 4], [true, true, false, true])
+  .takeWhile(value => value[1])
+  .map(value => value[0])
+  .collect()
+
+console.log(masked) // outputs: [1, 2]
+```
+
+
+### `XIterable.dropWhile`
+
+```typescript
+XIterable<T>.dropWhile(fn: (value: T, index: number) => boolean): XIterable<T>
+```
+
+Returns a new `XIterable` without the first values that satisfy the condition given by the argument function. When a value that doesn't satisfy the condition is found the sequence begins.
+
+```typescript
+import { zip } from 'xiterables'
+
+const masked = zip([1, 2, 3, 4], [true, true, false, true])
+  .dropWhile(value => value[1])
+  .map(value => value[0])
+  .collect()
+
+console.log(masked) // outputs: [3, 4]
 ```

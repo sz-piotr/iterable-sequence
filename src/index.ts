@@ -13,8 +13,8 @@ export const zip: <T, U> (a: MaybeIterable<T>, b: MaybeIterable<U>) => XIterable
   = (a, b) => new ZipIterable(a, b)
 
 
-function isIterable(arg: any): arg is Iterable<any> {
-  return arg[Symbol.iterator]
+function isIterable<T>(arg: MaybeIterable<T>): arg is Iterable<T> {
+  return (<Iterable<T>>arg)[Symbol.iterator] !== undefined
 }
 
 
@@ -241,7 +241,7 @@ class DropWhileIterable<T> extends XIterable<T> {
     let index = 0
     let fullfilled = false
     for(const value of this.iterable) {
-      if(fullfilled || this.fn(value, index++)) {
+      if(!fullfilled && this.fn(value, index++)) {
         continue
       }
       fullfilled = true

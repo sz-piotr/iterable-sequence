@@ -57,6 +57,20 @@ describe('XIterable', () => {
       .collect()
     expect(value).toEqual([0, 1, 2])
   })
+
+  test('XIterable.takeWhile', () => {
+    const value = range(Infinity)
+      .takeWhile((value, index) => value + index < 5)
+      .collect()
+    expect(value).toEqual([0, 1, 2])
+  })
+
+  test('XIterable.dropWhile', () => {
+    const value = new XIterable([1, 2, 3, 1, 2, 3])
+      .dropWhile((value, index) => value * index < 6)
+      .collect()
+    expect(value).toEqual([3, 1, 2, 3])
+  })
 })
 
 describe('range', () => {
