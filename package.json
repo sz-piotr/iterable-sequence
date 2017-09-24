@@ -1,6 +1,7 @@
 {
   "name": "iterable-sequence",
   "version": "0.1.0",
+  "license": "MIT",
   "main": "./lib/iterable-sequence.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
