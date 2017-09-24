@@ -1,18 +1,18 @@
-import { repeat, repeatValue, XIterable } from '../src'
+import { repeat, repeatValue, Sequence } from '../src'
 
 describe('repeat', () => {
-  it('accepts a sequence as argument', () => {
-    expect(repeat([1, 2, 3])).toBeInstanceOf(XIterable)
-    expect(repeat({ 0: 1, length: 1 })).toBeInstanceOf(XIterable)
-    expect(repeat(function* () { yield 1 })).toBeInstanceOf(XIterable)
+  it('accepts a Collection as argument', () => {
+    expect(repeat([1, 2, 3])).toBeInstanceOf(Sequence)
+    expect(repeat({ 0: 1, length: 1 })).toBeInstanceOf(Sequence)
+    expect(repeat(function* () { yield 1 })).toBeInstanceOf(Sequence)
   })
 
-  it('creates an XIterable with the sequence repeated', () => {
+  it('creates an Sequence with the Collection repeated', () => {
     const value1 = repeat('abc', 2)
-      .collect()
-    const value2 = new XIterable('abc')
+      .toArray()
+    const value2 = new Sequence('abc')
       .repeat(2)
-      .collect()
+      .toArray()
 
     expect(value1).toEqual(['a', 'b', 'c', 'a', 'b', 'c'])
     expect(value2).toEqual(value1)
@@ -20,21 +20,21 @@ describe('repeat', () => {
 
   it('will work with a single argument', () => {
     const value1 = repeat([1])
-    const value2 = new XIterable([1]).repeat()
+    const value2 = new Sequence([1]).repeat()
 
-    expect(value1).toBeInstanceOf(XIterable)
-    expect(value2).toBeInstanceOf(XIterable)
+    expect(value1).toBeInstanceOf(Sequence)
+    expect(value2).toBeInstanceOf(Sequence)
   })
 })
 
 describe('repeatValue', () => {
-  it('creates an XIterable with the value repeated', () => {
-    const value = repeatValue(1, 5).collect()
+  it('creates an Sequence with the value repeated', () => {
+    const value = repeatValue(1, 5).toArray()
     expect(value).toEqual([1, 1, 1, 1, 1])
   })
 
   it('will work with a single argument', () => {
     const value = repeatValue(1)
-    expect(value).toBeInstanceOf(XIterable)
+    expect(value).toBeInstanceOf(Sequence)
   })
 })

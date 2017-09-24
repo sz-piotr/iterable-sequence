@@ -1,32 +1,32 @@
-import { map, XIterable } from '../src'
+import { map, Sequence } from '../src'
 
 describe('map', () => {
-  it('accepts a sequence as argument', () => {
+  it('accepts a Collection as argument', () => {
     expect(map(
       [1, 2, 3],
       x => x
-    )).toBeInstanceOf(XIterable)
+    )).toBeInstanceOf(Sequence)
 
     expect(map(
       { 0: 1, length: 1 },
       x => x
-    )).toBeInstanceOf(XIterable)
+    )).toBeInstanceOf(Sequence)
 
     expect(map(
       function* () { yield 1 },
       x => x
-    )).toBeInstanceOf(XIterable)
+    )).toBeInstanceOf(Sequence)
   })
 
-  it('maps the values of the iterable using the function provided', () => {
-    const iterable = [1, 2, 3]
+  it('maps the values of the collection using the function provided', () => {
+    const collection = [1, 2, 3]
     const mapFn = (value: number, index: number) => value + index
 
-    const value1 = map(iterable, mapFn)
-      .collect()
-    const value2 = new XIterable(iterable)
+    const value1 = map(collection, mapFn)
+      .toArray()
+    const value2 = new Sequence(collection)
       .map(mapFn)
-      .collect()
+      .toArray()
 
     expect(value1).toEqual([1, 3, 5])
     expect(value2).toEqual(value1)

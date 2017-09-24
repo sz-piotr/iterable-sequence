@@ -1,11 +1,11 @@
-import { Sequence, asIterable } from './utils'
-import XIterable from './XIterable'
+import { Collection, asIterable } from './utils'
+import Sequence from './Sequence'
 
-function zip<T, U>(a: Sequence<T>, b: Sequence<U>) {
+function zip<T, U>(a: Collection<T>, b: Collection<U>) {
   const aIterable = asIterable(a)
   const bIterable = asIterable(b)
 
-  return new XIterable(function* (): Iterator<[T, U]> {
+  return new Sequence(function* (): Iterator<[T, U]> {
     const aIterator = aIterable[Symbol.iterator]()
     const bIterator = bIterable[Symbol.iterator]()
     let aValue = aIterator.next()

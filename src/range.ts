@@ -1,8 +1,8 @@
-import XIterable from './XIterable'
+import Sequence from './Sequence'
 
-function range(end: number): XIterable<number>
-function range(start: number, end: number): XIterable<number>
-function range(start: number, next: number, end: number): XIterable<number>
+function range(end: number): Sequence<number>
+function range(start: number, end: number): Sequence<number>
+function range(start: number, next: number, end: number): Sequence<number>
 function range(a: number, b?: number, c?: number) {
   let start = 0
   let step = 1
@@ -21,13 +21,13 @@ function range(a: number, b?: number, c?: number) {
   }
 
   if(step > 0) {
-    return new XIterable(function* () {
+    return new Sequence(function* () {
       for(let i = start; i < end; i += step) {
         yield i
       }
     })
   } else {
-    return new XIterable(function* () {
+    return new Sequence(function* () {
       for(let i = start; i > end; i += step) {
         yield i
       }

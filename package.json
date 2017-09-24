@@ -1,7 +1,7 @@
 {
-  "name": "xiterables",
+  "name": "iterable-sequence",
   "version": "0.1.0",
-  "main": "./lib/xiterables.js",
+  "main": "./lib/iterable-sequence.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
     "start": "webpack --watch --progress",

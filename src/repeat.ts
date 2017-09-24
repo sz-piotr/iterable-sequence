@@ -1,9 +1,9 @@
-import { Sequence, asIterable } from './utils'
-import XIterable from './XIterable'
+import { Collection, asIterable } from './utils'
+import Sequence from './Sequence'
 
-function repeat<T>(sequence: Sequence<T>, times: number = Infinity) {
-  const iterable = asIterable(sequence)
-  return new XIterable(function* () {
+function repeat<T>(collection: Collection<T>, times: number = Infinity) {
+  const iterable = asIterable(collection)
+  return new Sequence(function* () {
     for(let i = 0; i < times; i++) {
       for(const value of iterable) {
         yield value
@@ -13,7 +13,7 @@ function repeat<T>(sequence: Sequence<T>, times: number = Infinity) {
 }
 
 export function repeatValue<T>(value: T, times: number = Infinity) {
-  return new XIterable(function* () {
+  return new Sequence(function* () {
     for(let i = 0; i < times; i++) {
       yield value
     }

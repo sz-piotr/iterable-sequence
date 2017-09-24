@@ -9,7 +9,7 @@ const config = {
   output: {
     filename: `${libraryName}.js`,
     path: path.join(__dirname, 'lib'),
-    library: 'xi',
+    library: 'seq',
     libraryTarget: 'umd',
   },
   devtool: 'source-map',
