@@ -211,12 +211,12 @@ Example:
 import { zip, range } from 'iterable-sequence'
 
 const withIndices = zip('abc', range(Infinity)).toArray()
-console.log(withIndices) // [['a', 0], ['b', 1], ['c', 2]]
+console.log(withIndices) // outputs: [['a', 0], ['b', 1], ['c', 2]]
 
 const withIndicesReversed = range(Infinity)
   .zip('abc')
   .toArray()
-console.log(withIndicesReversed) // [[0, 'a'], [1, 'b'], [2, 'c']]
+console.log(withIndicesReversed) // outputs: [[0, 'a'], [1, 'b'], [2, 'c']]
 ```
 
 
@@ -237,6 +237,29 @@ import { map } from 'iterable-sequence'
 const lettersDashNumbers = map('abc', (letter, index) => `${letter}-${index}`)
   .toArray()
 
-console.log(lettersDashNumbers) // ['a-0', 'b-1', 'c-2']
+console.log(lettersDashNumbers) // outputs: ['a-0', 'b-1', 'c-2']
 ```
+
+
+## `flatMap`
+
+```typescript
+function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) => Collection<U>): Sequence<U>
+Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
+```
+
+`flatMap` is similar to `map` but it flattens the transformed values into the created sequence.
+
+Example:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const timesThenPlus = new range(3, 6) // 3, 4, 5
+  .flatMap((element, index) => [element * index, element + index])
+  .toArray()
+
+console.log(timesThenPlus) // outputs: [0, 3, 4, 5, 10, 7]
+```
+
 
