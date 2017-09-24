@@ -28,4 +28,12 @@ describe('Sequence', () => {
 
     expect(fromGenerator.toArray()).toEqual([1, 2, 3])
   })
+
+  test('Sequence.join', () => {
+    const withSeparator = new Sequence([1, 2, 3]).join(':')
+    const withoutSeparator = new Sequence([1, 2, 3]).join()
+
+    expect(withSeparator).toEqual('1:2:3')
+    expect(withoutSeparator).toEqual('123')
+  })
 })

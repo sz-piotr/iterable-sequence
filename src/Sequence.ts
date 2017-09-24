@@ -1,8 +1,8 @@
 import { Collection, isIterable } from './utils'
-import collect from './collect'
 import zip from './zip'
 import repeat from './repeat'
 import map from './map'
+import flatMap from './flatMap'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -31,8 +31,14 @@ class Sequence<T> implements Iterable<T> {
 
   join(separator = '') {
     let result = ''
+    let first = true
     for(const value of this) {
-      result += separator + value
+      if(first) {
+        result += value
+        first = false
+      } else {
+        result += separator + value
+      }
     }
     return result
   }
@@ -47,6 +53,10 @@ class Sequence<T> implements Iterable<T> {
 
   map<U>(fn: (value: T, index: number) => U) {
     return map(this, fn)
+  }
+
+  flatMap<U>(fn: (value: T, index: number) => Collection<U>) {
+    return flatMap(this, fn)
   }
 }
 
