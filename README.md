@@ -9,7 +9,7 @@ A utility library for working with iterables in modern JavaScript and TypeScript
 1. *Lazy* - values are computed only when they are actually used
 2. *No mutation* - functions and methods don't modify their arguments or internal state of their objects
 3. *User friendly API* - methods that you are already familiar with
-4. *Types* - the library was compiled with the `--strict` option
+4. *Types* - the library was written in TypeScript and compiled with the `--strict` option
 
 ## Motivation
 
@@ -25,276 +25,211 @@ TODO
 
 ## Index
 
-1. [Creating iterables](#creating-iterables)
-    - [`XIterable`](#xiterable)
-    - [`XIterable.constructor`](#xiterableconstructor)
-    - [`range`](#range)
-    - [`zip`](#zip)
-2. [Accessing values](#accessing-values)
-    - [`XIterable.collect`](#xiterablecollect)
-    - [`XIterable.forEach`](#xiterableforeach)
-    - [`XIterable.reduce`](#xiterablereduce)
-3. [Transforming values](#transforming-values)
-    - [`XIterable.map`](#xiterablemap)
-    - [`XIterable.flatMap`](#xiterableflatmap)
-    - [`XIterable.filter`](#xiterablefilter)
-    - [`XIterable.take`](#xiterabletake)
-    - [`XIterable.takeWhile`](#xiterabletakewhile)
-    - [`XIterable.dropWhile`](#xiterabledropwhile)
+- [`Sequence`](#sequence)
+- [`XIterable`](#xiterable)
+- [`collect`](#collect)
+- [`range`](#range)
+- [`repeat`](#repeat)
+- [`repeatValue`](#repeatvalue)
+- [`zip`](#zip)
+- [`map`](#map)
+
+## `Sequence`
+
+```typescript
+type Sequence<T> = Iterable<T> | ArrayLike<T> | (() => Iterator<T>)
+```
+
+The `Sequence` type is used all across the library. Objects of this type represent a seqence of values, but they can represent it indifferent ways. `Iterable` objects have a property `@@iterator` that allows for iteration in a `for..of` loop. `ArrayLike` objects have numeric keys and a `length` property. `() => Iterator<T>` is a type that denotes a generator function (created using `function*`).
+
+The values of the sequence can also be sequences themselves.
+
+Examples of `Sequence` types:
+
+```typescript
+const arraySequence = [1, 2, 3, 4]
+
+const stringSequence = 'abcde'
+
+const arrayLikeSequence = {
+  0: true,
+  1: false,
+  2: true,
+  length: 3
+}
+
+const generatorSequence = function* () {
+  yield [1, 2, 3, 4]
+  yield [5, 6, 7]
+  yield [8, 9]
+  yield [10]
+}
+```
 
 
-## Creating iterables
-
-
-### `XIterable`
+## `XIterable`
 
 ```typescript
 class XIterable<T> implements Iterable<T>
+XIterable<T>.constructor(sequence: Sequence<T>)
 ```
 
-This is the class that the library enables you to use. An `XIterable` object is just like a regular `Iterable`. It can be used in `for..of` loops and has a method `@@iterator`. It doesn't however have a `length` property and the elements of the sequence cannot be accessed by index. 
+The `XIterable` class is the main building block of the library. It encapsulates a `Sequence` object allowing for expressing data manipulations in the form of method chaining. 
 
-Most `XIterable` objects do not store their values in any way. They instead rely on the iteration protocol to obtain consequent values.
+An `XIterable` sequence is lazy. No values are computed unless you want to use them. This is because `XIterable` uses generator functions internally. This opens up the possibility for infinite seqences as they don't store their values anywhere and compute them on demand.
 
-All `XIterable` methods that return `XIterable` are lazy. That means that they do not perform any computation unless it's necessary. More importantly this means that any function passed to such method is only executed when true iteration occurs.
+All `XIterable` methods have their equivalents in the form of standalone functions of the same name.
 
-There are three ways to force the iteration to happen:
-
-1. By using a `for..of` loop or calling `.forEach()`
-2. By calling `.collect()`
-3. By calling `.reduce()`
-
-
-### `XIterable.constructor`
-
-```typescript
-XIterable<T>.constructor(iterable: Iterable<T>)
-XIterable<T>.constructor(iterable: ArrayLike<T>)
-XIterable<T>.constructor()
-```
-
-This is the primary way of obtaining `XIterable` objects used throughout the library. It accepts any existing `Iterable` or `ArrayLike` (numeric keys, length property) object.
+To obtain an `XIterable` just use the constructor like so:
 
 ```typescript
 import { XIterable } from 'xiterables'
 
-const fromIterable = new XIterable([1, 2, 3]) // 1, 2, 3
-const fromArrayLike = new XIterable({ 0: 'a', 1: 'b', length: 2 }) // 'a', 'b'
-const empty = new XIterable() // no values
+const myXIterable = new XIterable([1, 2, 3])
 ```
 
 
-### `range`
+## `collect`
 
 ```typescript
-function range(stop: number): XIterable<number>
+function collect<T>(sequence: Sequence<T>): T[]
+XIterable<T>.collect(): T[]
+```
+
+`collect` is a function that allows to retrieve values from a sequence. It iterates over the sequence creating an array of values in the process.
+
+Example:
+
+```typescript
+import { collect, XIterable } from 'xiterables'
+
+const mySequence = function* () {
+  yield 1
+  yield 2
+  yield 3
+}
+
+const values = collect(mySequence)
+// or
+const values = new XIterable(mySequence).collect()
+
+console.log(values) // outputs: [1, 2, 3]
+```
+
+
+## `range`
+
+```typescript
+function range(end: number): XIterable<number>
 function range(start: number, end: number): XIterable<number>
 function range(start: number, next: number, end: number): XIterable<number>
 ```
 
-The `range` function is the basic building block that the library provides. It enables the creation of `XIterable` objects whose values follow a linear progression. There are three ways of creating a range:
+`range` is used to create sequences whoose values follow a linear progression. This includes creating lists of consecutive integers, all even numbers or counting from 100 to 0.
+
+The created sequence can also be descending or infinite.
+
+Example:
 
 ```typescript
 import { range } from 'xiterables'
 
-// range(end)
-const first = range(5) // 0, 1, 2, 3, 4
+const oneArgument = range(5) // 0, 1, 2, 3, 4
+const twoArguments = range(2, 5) // 2, 3, 4
+const threeArguments = range(0, 2, 7) // 0, 2, 4, 6
 
-// range(start, end)
-const second = range(2, 5) // 2, 3, 4
-
-// range(start, next, end)
-const third = range(1, 3, 7) // 1, 3, 5
-```
-
-A range can also be infinite or descending:
-
-```typescript
-import { range } from 'xiterables'
- 
-const infinite = range(Infinity) // 0, 1, 2, ...
 const descending = range(5, 4, 0) // 5, 4, 3, 2, 1
+const infinite = range(Infinity) // 0, 1, 2, 3, ...
 ```
 
 
-### `zip`
+# `repeat`
 
 ```typescript
-function zip<T, U>(a: Iterable<T> | ArrayLike<T>, b: Iterable<U> | ArrayLike<U>): XIterable<[T, U]>
+function repeat<T>(sequence: Sequence<T>, times?: number): XIterable<T>
+XIterable<T>.repeat(times?: number): XIterable<T>
 ```
 
-The `zip` function allows joining two iterables into one `XIterable`. It's best understood by example.
+`repeat` is used to create sequences that are a repetition of the one provided as argument. The second argument controls how many times the sequence is repeated. If you omit the argument it defaults to `Infinity`.
+
+Example:
 
 ```typescript
-import { zip } from 'xiterables'
+import { repeat, XIterable } from 'xiterables'
 
-const zipped = zip([1, 2, 3], ['a', 'b']) // [1, 'a'], [2, 'b']
-```
+for(const value of repeat([1, 2])) {
+  console.log(value) // outputs: 1, 2, 1, 2, 1, 2, ...
+}
 
-The length of the resulting sequence is equal to the length of the shorter of the sequences.
-
-## Accessing values
-
-
-### `XIterable.collect`
-
-```typescript
-XIterable<T>.collect(): T[]
-```
-
-The method enables acquiring a sequence of values from an `XIterable` as a JavaScript `Array`.
-
-```typescript
-import { XIterable } from 'xiterables'
-
-const array = new XIterable([1, 2, 3]).collect() // [1, 2, 3]
-```
-
-
-### `XIterable.forEach`
-
-```typescript
-XIterable<T>.forEach(fn: (value: T, index: number) => any): void
-```
-
-The method calls the argument with every value of the XIterable's sequence.
-
-```typescript
-import { range } from 'xiterables'
-
-range(5).forEach(console.log) // outputs: 0, 1, 2, 3, 4
-```
-
-
-### `XIterable.reduce`
-
-```typescript
-XIterable<T>.reduce(fn: (accumulator: T, currentValue: T) => T): T | undefined
-```
-
-This method reduces the values of the observable to a single value.
-
-```typescript
-import { range } from 'xiterables'
-
-const factorial = (value: number) => range(value)
-  .reduce((a, b) => a * b)
-
-console.log(factorial(5)) // outputs: 120 
-```
-
-## Transforming values
-
-
-### `XIterable.map`
-
-```typescript
-XIterable<T>.map<U>(fn: (value: T, index: number) => U): XIterable<U>
-```
-
-Returns a new `XIterable` with values transformed by the function passed as argument.
-
-```typescript
-import { XIterable } from 'xiterables'
-
-const charCodes = new XIterable('ascii')
-  .map(char => char.charCodeAt(0))
-  .forEach(console.log) // outputs: 97, 115, 99, 105, 105
-```
-
-
-### `XIterable.flatMap`
-
-```typescript
-XIterable<T>.flatMap<U>(fn: (value: T, index: number) => Iterable<U> | ArrayLike<U>): XIterable<U>
-```
-
-Returns a new `XIterable` with values transformed by the function passed as argument. The argument function must return an `Iterable` or an `ArrayLike` object. The return value of the function is then flattened into the resulting sequence.
-
-```typescript
-import { range } from 'xiterables'
-
-const alternate = range(1, 4)
-  .flatMap(value => [value, -value])
-  .collect() // [1, -1, 2, -2, 3, -3]
-```
-
-
-### `XIterable.filter`
-
-```typescript
-XIterable<T>.filter(fn: (value: T, index: number) => boolean): XIterable<T>
-```
-
-Returns a new `XIterable` with values that satisfy the condition given by the argument.
-
-```typescript
-import { XIterable } from 'xiterables'
-
-const everyOther = new XIterable('cheeseburger')
-  .filter((value, index) => index % 2 === 0)
+const values = new XIterable('abc')
+  .repeat(3)
   .collect()
   .join('')
 
-console.log(everyOther) // outputs: 'cesbre'
+console.log(values) // outputs: 'abcabcabc'
 ```
 
 
-### `XIterable.take`
+# `repeatValue`
 
 ```typescript
-XIterable<T>.take(count: number): XIterable<T>
+function repeatValue<T>(value: T, times?: number): XIterable<T>
 ```
 
-Returns a new `XIterable` with only the first n or less values, where the n is the argument.
+`repeatValue` is similar to `repeat` but it treats it first argument as a single value. The second argument controls how many times the value is repeated. If you omit the argument it defaults to `Infinity`.
+
+Example:
+
+```typescript
+import { repeatValue } from 'xiterables'
+
+for(const value of repeatValue(3, 5)) {
+  console.log(value) // outputs: 3, 3, 3, 3, 3
+}
+```
+
+
+# `zip`
+
+```typescript
+function zip<T, U>(a: Sequence<T>, b: Sequence<U>): XIterable<[T, U]>
+XIterable<T>.zip<U>(sequence: Sequence<U>): XIterable<[T, U]>
+```
+
+`zip` is used to join two sequences into one. The resulting sequence consists of pairs of values and has the length of the shorter of the two provided.
+
+Example:
 
 ```typescript
 import { range } from 'xiterables'
 
-const geometry = range(Infinity)
-  .map(x => 2 ** x)
-  .take(5)
+const thisAndNext = range(3)
+  .zip(range(1, 4))
   .collect()
 
-console.log(geometry) // outputs: [1, 2, 4, 8, 16]
+console.log(thisAndNext) // [[0, 1], [1, 2], [2, 3]]
 ```
 
 
-### `XIterable.takeWhile`
+# `map`
 
 ```typescript
-XIterable<T>.takeWhile(fn: (value: T, index: number) => boolean): XIterable<T>
+function map<T, U>(sequence: Sequence<T>, fn: (value: T, index: number) => U): XIterable<U>
+XIterable<T>.map<U>(fn: (value: T, index: number) => U): XIterable<U>
 ```
 
-Returns a new `XIterable` with the first values that satisfy the condition given by the argument function. When a value that doesn't satisfy the condition is found the sequence ends.
+`map` is used to replace values in a sequence with the results of the function it receives as an argument.
+
+Example:
 
 ```typescript
-import { zip } from 'xiterables'
+import { map } from 'xiterables'
 
-const masked = zip([1, 2, 3, 4], [true, true, false, true])
-  .takeWhile(value => value[1])
-  .map(value => value[0])
-  .collect()
+const lettersWithNumbers = map(
+  'abc',
+  (letter, index) => `${letter}-${index}`
+).collect()
 
-console.log(masked) // outputs: [1, 2]
+console.log(lettersWithNumbers) // ['a-1', 'b-2', 'c-3']
 ```
 
-
-### `XIterable.dropWhile`
-
-```typescript
-XIterable<T>.dropWhile(fn: (value: T, index: number) => boolean): XIterable<T>
-```
-
-Returns a new `XIterable` without the first values that satisfy the condition given by the argument function. When a value that doesn't satisfy the condition is found the sequence begins.
-
-```typescript
-import { zip } from 'xiterables'
-
-const masked = zip([1, 2, 3, 4], [true, true, false, true])
-  .dropWhile(value => value[1])
-  .map(value => value[0])
-  .collect()
-
-console.log(masked) // outputs: [3, 4]
-```
