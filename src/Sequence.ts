@@ -3,6 +3,7 @@ import zip from './zip'
 import repeat from './repeat'
 import map from './map'
 import flatMap from './flatMap'
+import filter from './filter'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -57,6 +58,10 @@ class Sequence<T> implements Iterable<T> {
 
   flatMap<U>(fn: (value: T, index: number) => Collection<U>) {
     return flatMap(this, fn)
+  }
+
+  filter(fn: (value: T, index: number) => boolean) {
+    return filter(this, fn)
   }
 }
 
