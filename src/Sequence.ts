@@ -4,6 +4,7 @@ import repeat from './repeat'
 import map from './map'
 import flatMap from './flatMap'
 import filter from './filter'
+import takeWhile from './takeWhile'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -62,6 +63,10 @@ class Sequence<T> implements Iterable<T> {
 
   filter(fn: (value: T, index: number) => boolean) {
     return filter(this, fn)
+  }
+
+  takeWhile(fn: (value: T, index: number) => boolean) {
+    return takeWhile(this, fn)
   }
 }
 
