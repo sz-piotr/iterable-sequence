@@ -53,20 +53,46 @@ class Sequence<T> implements Iterable<T> {
     return repeat(this, times)
   }
 
+  /**
+   * Create a new Sequence that contains the elements created from the elements of this Sequence.
+   * @param fn A function that produces an element of the new Sequence using an element of the old collection.
+   * @returns A new Sequence that contains the elements created from the elements of this Sequence.
+   */
   map<U>(fn: (value: T, index: number) => U) {
     return map(this, fn)
   }
 
+
+  /**
+   * Create a new Sequence that contains the elements of flattened collections created from the elements
+   * of this Sequence.
+   * @param fn A function that produces an element of the new Sequence using an element of the old collection.
+   * @returns A new Sequence that contains the elements of flattened collections created from the elements
+   * of this Sequence.
+   */
   flatMap<U>(fn: (value: T, index: number) => Collection<U>) {
     return flatMap(this, fn)
   }
 
-  filter(fn: (value: T, index: number) => boolean) {
-    return filter(this, fn)
+  /**
+   * Create a new Sequence that contains the elements from this Sequence that satisfy the predicate.
+   * @param predicate A function that tests if a value satisfies some condition.
+   * @returns A new Sequence that contains the elements from this Sequence that satisfy the predicate.
+   */
+  filter(predicate: (value: T, index: number) => boolean) {
+    return filter(this, predicate)
   }
 
-  takeWhile(fn: (value: T, index: number) => boolean) {
-    return takeWhile(this, fn)
+  /**
+   * Create a new Sequence that contains the elements from this Sequence that occur before the element that no
+   * longer satisfies the predicate.
+   * @param collection A collection to filter.
+   * @param predicate A function that tests if a value satisfies some condition.
+   * @returns A new Sequence that contains the elements from this Sequence that occur before the element that no
+   * longer satisfies the predicate.
+   */
+  takeWhile(predicate: (value: T, index: number) => boolean) {
+    return takeWhile(this, predicate)
   }
 }
 
