@@ -56,10 +56,19 @@ class Sequence<T> implements Iterable<T> {
     return result
   }
 
+  /**
+   * Return a Sequence whose elements are two element arrays created from the elements of this Sequence and
+   * the collection passed as arguments. The length of the sequence is equal to the length of the shorter collection.
+   * @param collection A Collection to zip
+   */
   zip<U>(collection: Collection<U>) {
     return zip(this, collection)
   }
 
+  /**
+   * Return a Sequence whose elements are the elements of this Sequence repeated the specified number of times.
+   * @param times The number of times the elements are repeated. Defaults to Infinity
+   */
   repeat(times?: number) {
     return repeat(this, times)
   }
@@ -71,7 +80,6 @@ class Sequence<T> implements Iterable<T> {
   map<U>(fn: (value: T, index: number) => U) {
     return map(this, fn)
   }
-
 
   /**
    * Return a new Sequence that contains the elements of flattened collections created from the elements
