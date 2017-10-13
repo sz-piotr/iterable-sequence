@@ -1,19 +1,19 @@
 import Sequence from './Sequence'
 
 /**
- * Create a Sequence of consecutive integers smaller than the value of the first parameter starting with 0
+ * Return a Sequence of consecutive integers smaller than the value of the first parameter starting with 0
  * @param end Upper limit of the sequence
  */
 function range(end: number): Sequence<number>
 /**
- * Create a Sequence of consecutive integers smaller than the value of the first parameter starting with the value
+ * Return a Sequence of consecutive integers smaller than the value of the first parameter starting with the value
  * of the second parameter
  * @param start First element of the sequence
  * @param end Upper limit of the sequence
  */
 function range(start: number, end: number): Sequence<number>
 /**
- * Create a Sequence of integers smaller than the value of the first parameter starting with the value
+ * Return a Sequence of integers smaller than the value of the first parameter starting with the value
  * of the second parameter. The value of the third parameter dictates the step.
  * @param start First element of the sequence
  * @param end Upper limit of the sequence
