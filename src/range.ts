@@ -1,17 +1,34 @@
 import Sequence from './Sequence'
 
+/**
+ * Create a Sequence of consecutive integers smaller than the value of the first parameter starting with 0
+ * @param end Upper limit of the sequence
+ */
 function range(end: number): Sequence<number>
+/**
+ * Create a Sequence of consecutive integers smaller than the value of the first parameter starting with the value
+ * of the second parameter
+ * @param start First element of the sequence
+ * @param end Upper limit of the sequence
+ */
 function range(start: number, end: number): Sequence<number>
-function range(start: number, next: number, end: number): Sequence<number>
+/**
+ * Create a Sequence of integers smaller than the value of the first parameter starting with the value
+ * of the second parameter. The value of the third parameter dictates the step.
+ * @param start First element of the sequence
+ * @param end Upper limit of the sequence
+ * @param step Difference between two consecutive elements of the Sequence
+ */
+function range(start: number, end: number, step: number): Sequence<number>
 function range(a: number, b?: number, c?: number) {
   let start = 0
-  let step = 1
   let end: number
+  let step = 1
   if(b !== undefined) {
     if(c !== undefined) {
       start = a
-      step = b - a
-      end = c
+      end = b
+      step = c
     } else {
       start = a
       end = b
