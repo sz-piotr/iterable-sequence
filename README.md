@@ -39,9 +39,9 @@ var values = seq.range(5).toArray()
 console.log(values) // outputs: 0, 1, 2, 3, 4
 ```
 
-You can also use the provided script directly in the browser:
+You can also use the provided script directly in the browser (using the following link is not recommended in production):
 ```html
-<script src="https://cdn.rawgit.com/sz-piotr/iterable-sequence/905ec730/lib/iterable-sequence.js"></script>
+<script src="https://rawgit.com/sz-piotr/iterable-sequence/master/lib/iterable-sequence.js"></script>
 <script>
   var values = seq.range(5).toArray()
   console.log(values) // outputs: 0, 1, 2, 3, 4
@@ -124,17 +124,29 @@ To obtain an `Sequence` just use the constructor like so:
 ```typescript
 import { Sequence } from 'iterable-sequence'
 
-const mySequence = new Sequence([1, 2, 3])
+const sequenceFromArray = new Sequence(['a', 'b', 'c'])
+const sequenceFromString = new Sequence('abc')
+const sequenceFromArrayLike = new Sequence({ 
+  0: 'a', 
+  1: 'b', 
+  2: 'c',
+  length: 3 
+})
+const sequenceFromGenerator = new Sequence(function* () { 
+  yield 'a'
+  yield 'b'
+  yield 'c' 
+})
 ```
 
 
 ## `Sequence.toArray`
 
 ```typescript
-Sequence<T>.toArray(): T[]
+(method) Sequence<T>.toArray(): T[]
 ```
 
-`.toArray` is a function that allows to retrieve values from a `Sequence`. It iterates over the `Sequence` creating an array of values in the process.
+Return an array with the elements of this Sequence.
 
 Example:
 
@@ -149,18 +161,22 @@ console.log(values) // outputs: ['a', 'b', 'c']
 ## `Sequence.join`
 
 ```typescript
-Sequence<T>.join(separator?: string): string
+(method) Sequence<T>.join(separator?: string): string
 ```
 
-`.join` is a function that concatenates the string representation of the `Sequence` values creating a larger string in the process. When no separator is provided an empty string is used.
+Return a string formed by concatenating the string representation of the elements of this Sequence.
+
+Arguments:
+* **separator**: A string that will be used between the Sequence elements. Defaults to empty string.
 
 Example:
 
 ```typescript
 import { Sequence } from 'iterable-sequence'
 
-const value = new Sequence([1, 2, 3]).join('-')
-console.log(value) // outputs: '1-2-3'
+const sequence = new Sequence([1, 2, 3])
+console.log(sequence.join()) // outputs: '123'
+console.log(sequence.join('-')) // outputs: '1-2-3'
 ```
 
 
@@ -169,12 +185,15 @@ console.log(value) // outputs: '1-2-3'
 ```typescript
 function range(end: number): Sequence<number>
 function range(start: number, end: number): Sequence<number>
-function range(start: number, next: number, end: number): Sequence<number>
+function range(start: number, end: number, step: number): Sequence<number>
 ```
 
-`range` is a function that creates a `Sequence` of integer values that follow a linear progression.
+Return a Sequence of integers smaller than the value of the first parameter starting with the value of the second parameter. The value of the third parameter dictates the step.
 
-The created `Sequence` can also be descending or infinite.
+Arguments:
+* **start** First element of the sequence. Defaults to 0.
+* **end** Upper limit of the sequence.
+* **step** Difference between two consecutive elements of the Sequence. Defaults to 1.
 
 Example:
 
@@ -183,9 +202,9 @@ import { range } from 'iterable-sequence'
 
 const oneArgument = range(5) // 0, 1, 2, 3, 4
 const twoArguments = range(2, 5) // 2, 3, 4
-const threeArguments = range(0, 2, 7) // 0, 2, 4, 6
+const threeArguments = range(0, 7, 2) // 0, 2, 4, 6
 
-const descending = range(5, 4, 0) // 5, 4, 3, 2, 1
+const descending = range(5, 0, -1) // 5, 4, 3, 2, 1
 const infinite = range(Infinity) // 0, 1, 2, 3, ...
 ```
 
@@ -194,22 +213,26 @@ const infinite = range(Infinity) // 0, 1, 2, 3, ...
 
 ```typescript
 function repeat<T>(collection: Collection<T>, times?: number): Sequence<T>
-Sequence<T>.repeat(times?: number): Sequence<T>
+(method) Sequence<T>.repeat(times?: number): Sequence<T>
 ```
 
-`repeat` creates a `Sequence` with values taken from a given `Collection` and repeated. The second argument controls how many times the `Collection` is repeated. If you omit the argument it defaults to `Infinity`.
+Return a Sequence whose elements are the elements of the passed collection repeated the specified number of times.
+ 
+Arguments: 
+* **collection** A Collection whose elements will be repeated in the resulting Sequence
+* **times** The number of times the elements are repeated. Defaults to Infinity
 
 Example:
 
 ```typescript
 import { repeat } from 'iterable-sequence'
 
+const tripleABC = repeat('abc', 3).join()
+console.log(tripleABC) // outputs: 'abcabcabc'
+
 for(const value of repeat([1, 2])) {
   console.log(value) // outputs: 1, 2, 1, 2, 1, 2, ...
 }
-
-const tripleABC = repeat('abc', 3).join()
-console.log(tripleABC) // outputs: 'abcabcabc'
 ```
 
 
@@ -219,7 +242,11 @@ console.log(tripleABC) // outputs: 'abcabcabc'
 function repeatValue<T>(value: T, times?: number): Sequence<T>
 ```
 
-`repeatValue` is similar to `repeat` but it treats it first argument as a single value. The second argument controls how many times the value is repeated. If you omit the argument it defaults to `Infinity`.
+Return a Sequence consisting of the supplied value repeated the specified number of times.
+
+Arguments:
+* **value** A value to repeat.
+* **times** The number of times the value is repeated. Defaults to Infinity.
 
 Example:
 
@@ -236,10 +263,14 @@ for(const value of repeatValue(3, 5)) {
 
 ```typescript
 function zip<T, U>(a: Collection<T>, b: Collection<U>): Sequence<[T, U]>
-Sequence<T>.zip<U>(collection: Collection<U>): Sequence<[T, U]>
+(method) Sequence<T>.zip<U>(collection: Collection<U>): Sequence<[T, U]>
 ```
 
-`zip` is used to join two `Collection` objects into one. The resulting `Sequence` consists of pairs of values and has the length of the shorter of the two provided.
+Return a Sequence whose elements are two element arrays created from the elements of the collections passed as arguments. The length of the sequence is equal to the length of the shorter collection.
+
+Arguments:
+* **a** A Collection to zip
+* **b** A Collection to zip
 
 Example:
 
@@ -260,7 +291,7 @@ console.log(withIndicesReversed) // outputs: [[0, 'a'], [1, 'b'], [2, 'c']]
 
 ```typescript
 function map<T, U>(collection: Collection<T>, fn: (value: T, index: number) => U): Sequence<U>
-Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
+(method) Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
 ```
 
 `map` creates a `Sequence` which values correspond to the given `Collection` but are transformed by applying the function passed as argument to them.
@@ -281,10 +312,31 @@ console.log(lettersDashNumbers) // outputs: ['a-0', 'b-1', 'c-2']
 
 ```typescript
 function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) => Collection<U>): Sequence<U>
-Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
+(method) Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
 ```
 
 `flatMap` is similar to `map` but it flattens the transformed values into the created sequence.
+
+Example:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const timesThenPlus = range(3, 6) // 3, 4, 5
+  .flatMap((element, index) => [element * index, element + index])
+  .toArray()
+
+console.log(timesThenPlus) // outputs: [0, 3, 4, 5, 10, 7]
+```
+
+## `filter`
+
+```typescript
+function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) => Collection<U>): Sequence<U>
+(method) Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
+```
+
+Return a Sequence that contains the elements from the input collection that satisfy the predicate.
 
 Example:
 
