@@ -6,6 +6,7 @@ import flatMap from './flatMap'
 import filter from './filter'
 import take from './take'
 import takeWhile from './takeWhile'
+import drop from './drop'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -116,6 +117,15 @@ class Sequence<T> implements Iterable<T> {
    */
   takeWhile(predicate: (value: T, index: number) => boolean) {
     return takeWhile(this, predicate)
+  }
+
+  /**
+   * Return a Sequence that contains the elements of this sequence without the first elements. The argument
+   * specifies the number of elements to omit.
+   * @param count The number of elements to omit.
+  */
+  drop(count: number) {
+    return drop(this, count)
   }
 }
 

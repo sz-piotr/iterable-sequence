@@ -7,7 +7,7 @@ describe('take', () => {
     expect(take(function* () { yield 1 }, 1)).toBeInstanceOf(Sequence)
   })
 
-  it('maps and flattens the values of the collection using the function provided', () => {
+  it('takes the first elements of the collection', () => {
     const collection = [1, 2, 3, 4]
     const value1 = take(collection, 2)
       .toArray()

@@ -408,4 +408,24 @@ console.log(firstName) // outputs: 'John'
 ```
 
 ## `drop`
+
+```typescript
+function drop<T>(collection: Collection<T>, count: number): Sequence<T>
+(method) Sequence<T>.drop(count: number): Sequence<T>
+```
+
+Return a Sequence that contains the elements of the collection without the first elements. The argument specifies the number of elements to omit.
+
+Arguments:
+* **collection**: A collection to use as source of elements.
+* **count**: The number of elements to omit.
+
+Example:
+```typescript
+import { drop } from 'iterable-sequence'
+
+const allButFirst = drop('xyz', 1).join()
+console.log(allButFirst) // outputs: 'yz'
+```
+
 ## `dropWhile`
