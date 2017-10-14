@@ -66,6 +66,7 @@ TODO
 - [`Sequence`](#sequence)
 - [`Sequence.toArray`](#sequencetoarray)
 - [`Sequence.join`](#sequencejoin)
+- [`Sequence.forEach`](#sequenceforeach)
 - [`collect`](#collect)
 - [`range`](#range)
 - [`repeat`](#repeat)
@@ -162,7 +163,6 @@ const values = new Sequence('abc').toArray()
 console.log(values) // outputs: ['a', 'b', 'c']
 ```
 
-
 ## `Sequence.join`
 
 ```typescript
@@ -183,6 +183,30 @@ console.log(sequence.join()) // outputs: '123'
 console.log(sequence.join('-')) // outputs: '1-2-3'
 ```
 
+## `Sequence.forEach`
+
+```typescript
+(method) Sequence<T>.forEach(fn: (value: T, index: number) => any): void
+```
+
+For each element of this Sequence call the supplied function with the value and index of this element.
+
+Arguments:
+* **fn**: The function to call with the values and indices of the elements of this Sequence.
+
+Example:
+```typescript
+import { Sequence } from 'iterable-sequence'
+
+const sequence = new Sequence('xyz')
+sequence.forEach(console.log) 
+/*
+  outputs:
+    'x', 0
+    'y', 1
+    'z', 2
+*/
+```
 
 ## `range`
 

@@ -59,6 +59,17 @@ class Sequence<T> implements Iterable<T> {
   }
 
   /**
+   * For each element of this Sequence call the supplied function with the value and index of this element.
+   * @param fn The function to call with the values and indices of the elements of this Sequence.
+   */
+  forEach(fn: (value: T, index: number) => any) {
+    let index = 0
+    for(const value of this) {
+      fn(value, index++)
+    }
+  }
+
+  /**
    * Return a Sequence whose elements are two element arrays created from the elements of this Sequence and
    * the collection passed as arguments. The length of the sequence is equal to the length of the shorter collection.
    * @param collection A Collection to zip

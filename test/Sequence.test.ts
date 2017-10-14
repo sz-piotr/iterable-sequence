@@ -36,4 +36,15 @@ describe('Sequence', () => {
     expect(withSeparator).toEqual('1:2:3')
     expect(withoutSeparator).toEqual('123')
   })
+
+  test('Sequence.forEach', () => {
+    const fn = jest.fn()
+    const sequence = new Sequence('abc').forEach(fn)
+
+    expect(fn.mock.calls).toEqual([
+      ['a', 0],
+      ['b', 1],
+      ['c', 2],
+    ])
+  })
 })
