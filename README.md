@@ -72,6 +72,12 @@ TODO
 - [`repeatValue`](#repeatvalue)
 - [`zip`](#zip)
 - [`map`](#map)
+- [`flatMap`](#flatmap)
+- [`filter`](#filter)
+- [`take`](#take)
+- [`takeWhile`](#takeWhile)
+- [`drop`](#drop)
+- [`dropWhile`](#dropWhile)
 
 ## `Collection`
 
@@ -191,9 +197,9 @@ function range(start: number, end: number, step: number): Sequence<number>
 Return a Sequence of integers smaller than the value of the first parameter starting with the value of the second parameter. The value of the third parameter dictates the step.
 
 Arguments:
-* **start** First element of the sequence. Defaults to 0.
-* **end** Upper limit of the sequence.
-* **step** Difference between two consecutive elements of the Sequence. Defaults to 1.
+* **start**: First element of the sequence. Defaults to 0.
+* **end**: Upper limit of the sequence.
+* **step**: Difference between two consecutive elements of the Sequence. Defaults to 1.
 
 Example:
 
@@ -219,8 +225,8 @@ function repeat<T>(collection: Collection<T>, times?: number): Sequence<T>
 Return a Sequence whose elements are the elements of the passed collection repeated the specified number of times.
  
 Arguments: 
-* **collection** A Collection whose elements will be repeated in the resulting Sequence
-* **times** The number of times the elements are repeated. Defaults to Infinity
+* **collection**: A Collection whose elements will be repeated in the resulting Sequence
+* **times**: The number of times the elements are repeated. Defaults to Infinity
 
 Example:
 
@@ -245,8 +251,8 @@ function repeatValue<T>(value: T, times?: number): Sequence<T>
 Return a Sequence consisting of the supplied value repeated the specified number of times.
 
 Arguments:
-* **value** A value to repeat.
-* **times** The number of times the value is repeated. Defaults to Infinity.
+* **value**: A value to repeat.
+* **times**: The number of times the value is repeated. Defaults to Infinity.
 
 Example:
 
@@ -269,8 +275,8 @@ function zip<T, U>(a: Collection<T>, b: Collection<U>): Sequence<[T, U]>
 Return a Sequence whose elements are two element arrays created from the elements of the collections passed as arguments. The length of the sequence is equal to the length of the shorter collection.
 
 Arguments:
-* **a** A Collection to zip
-* **b** A Collection to zip
+* **a**: A Collection to zip
+* **b**: A Collection to zip
 
 Example:
 
@@ -294,7 +300,11 @@ function map<T, U>(collection: Collection<T>, fn: (value: T, index: number) => U
 (method) Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
 ```
 
-`map` creates a `Sequence` which values correspond to the given `Collection` but are transformed by applying the function passed as argument to them.
+Return a Sequence that contains the elements created from the input collection elements.
+
+Arguments:
+* **collection**: A collection to use as input.
+* **fn**: A function that produces an element of the new Sequence using an element of the old collection.
 
 Example:
 
@@ -315,7 +325,11 @@ function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) 
 (method) Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
 ```
 
-`flatMap` is similar to `map` but it flattens the transformed values into the created sequence.
+Return a Sequence that contains the elements of flattened collections created from the input collection elements.
+
+Arguments:
+* **collection**: A collection to use as input.
+* **fn**: A function that produces an element of the new Sequence using an element of the old collection.
 
 Example:
 
@@ -338,16 +352,48 @@ function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) 
 
 Return a Sequence that contains the elements from the input collection that satisfy the predicate.
 
+Arguments:
+* **collection**: A collection to filter.
+* **predicate**: A function that tests if a value satisfies some condition.
+
 Example:
 
 ```typescript
 import { range } from 'iterable-sequence'
 
-const timesThenPlus = new range(3, 6) // 3, 4, 5
-  .flatMap((element, index) => [element * index, element + index])
+const noFours = new range(6, 2, -1) // 6, 5, 4, 3
+  .filter(x => x !== 4)
   .toArray()
 
-console.log(timesThenPlus) // outputs: [0, 3, 4, 5, 10, 7]
+console.log(noFours) // outputs: [6, 5, 3]
 ```
 
+## `take`
+## `takeWhile`
 
+```typescript
+function takeWhile<T>(collection: Collection<T>, predicate: (value: T, index: number) => boolean): Sequence<T>
+(method) Sequence<T>.takeWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
+```
+
+Return a Sequence that contains the elements from the input collection that occur before the element that no longer satisfies the predicate.
+
+Arguments: 
+* **collection**: A collection to filter.
+* **predicate**: A function that tests if a value satisfies some condition.
+
+Example:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const firstSmallerThan4 = new range(Infinity)
+  .map(x => x % 2 + x % 4) // 0, 2, 2, 4, 0, 2, 2, 4, ...
+  .takeWhile(x => x < 4)
+  .toArray()
+
+console.log(firstSmallerThan4) // outputs: [0, 2, 2]
+```
+
+## `drop`
+## `dropWhile`
