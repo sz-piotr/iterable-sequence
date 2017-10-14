@@ -155,7 +155,6 @@ const sequenceFromGenerator = new Sequence(function* () {
 Return an array with the elements of this Sequence.
 
 Example:
-
 ```typescript
 import { Sequence } from 'iterable-sequence'
 
@@ -176,7 +175,6 @@ Arguments:
 * **separator**: A string that will be used between the Sequence elements. Defaults to empty string.
 
 Example:
-
 ```typescript
 import { Sequence } from 'iterable-sequence'
 
@@ -202,7 +200,6 @@ Arguments:
 * **step**: Difference between two consecutive elements of the Sequence. Defaults to 1.
 
 Example:
-
 ```typescript
 import { range } from 'iterable-sequence'
 
@@ -229,7 +226,6 @@ Arguments:
 * **times**: The number of times the elements are repeated. Defaults to Infinity
 
 Example:
-
 ```typescript
 import { repeat } from 'iterable-sequence'
 
@@ -255,7 +251,6 @@ Arguments:
 * **times**: The number of times the value is repeated. Defaults to Infinity.
 
 Example:
-
 ```typescript
 import { repeatValue } from 'iterable-sequence'
 
@@ -279,7 +274,6 @@ Arguments:
 * **b**: A Collection to zip
 
 Example:
-
 ```typescript
 import { zip, range } from 'iterable-sequence'
 
@@ -307,7 +301,6 @@ Arguments:
 * **fn**: A function that produces an element of the new Sequence using an element of the old collection.
 
 Example:
-
 ```typescript
 import { map } from 'iterable-sequence'
 
@@ -332,7 +325,6 @@ Arguments:
 * **fn**: A function that produces an element of the new Sequence using an element of the old collection.
 
 Example:
-
 ```typescript
 import { range } from 'iterable-sequence'
 
@@ -357,11 +349,10 @@ Arguments:
 * **predicate**: A function that tests if a value satisfies some condition.
 
 Example:
-
 ```typescript
 import { range } from 'iterable-sequence'
 
-const noFours = new range(6, 2, -1) // 6, 5, 4, 3
+const noFours = range(6, 2, -1) // 6, 5, 4, 3
   .filter(x => x !== 4)
   .toArray()
 
@@ -369,6 +360,29 @@ console.log(noFours) // outputs: [6, 5, 3]
 ```
 
 ## `take`
+
+```typescript
+function take<T>(collection: Collection<T>, count: number): Sequence<T>
+(method) Sequence<T>.take(count: number): Sequence<T>
+```
+
+Return a Sequence that contains the first elements of the collection. The argument specifies the number of elements to take. If the length of the collection is smaller, all of the colleciton elements will be present in the resulting sequence.
+
+Arguments:
+* **collection**: A collection to use as source of elements.
+* **count**: The number of elements to take.
+
+Example:
+```typescript
+import { take } from 'iterable-sequence'
+
+const firstLetters = take('abcdefghijklmnopqrtuvwxyz', 5).join()
+const firstCats = take(['Garfield', 'Puss', 'Smokey'], 6).join(' and ')
+
+console.log(firstLetters) // outputs: 'abcde'
+console.log(firstCats) // outputs: 'Garfield and Puss and Smokey'
+```
+
 ## `takeWhile`
 
 ```typescript
@@ -383,16 +397,14 @@ Arguments:
 * **predicate**: A function that tests if a value satisfies some condition.
 
 Example:
-
 ```typescript
-import { range } from 'iterable-sequence'
+import { Sequence } from 'iterable-sequence'
 
-const firstSmallerThan4 = new range(Infinity)
-  .map(x => x % 2 + x % 4) // 0, 2, 2, 4, 0, 2, 2, 4, ...
-  .takeWhile(x => x < 4)
-  .toArray()
+const firstName = new Sequence('John Doe and Jane Doe')
+  .takeWhile(char => char !== ' ')
+  .join()
 
-console.log(firstSmallerThan4) // outputs: [0, 2, 2]
+console.log(firstName) // outputs: 'John'
 ```
 
 ## `drop`

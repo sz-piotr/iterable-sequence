@@ -4,6 +4,7 @@ import repeat from './repeat'
 import map from './map'
 import flatMap from './flatMap'
 import filter from './filter'
+import take from './take'
 import takeWhile from './takeWhile'
 
 class Sequence<T> implements Iterable<T> {
@@ -96,6 +97,16 @@ class Sequence<T> implements Iterable<T> {
    */
   filter(predicate: (value: T, index: number) => boolean) {
     return filter(this, predicate)
+  }
+
+  /**
+   * Return a Sequence that contains the first elements of this sequence. The argument specifies the
+   * number of elements to take. If the length of this sequence is smaller, all of the sequence elements
+   * will be present in the resulting sequence.
+   * @param count The number of elements to take.
+   */
+  take(count: number) {
+    return take(this, count)
   }
 
   /**
