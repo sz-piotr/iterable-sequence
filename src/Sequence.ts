@@ -7,6 +7,7 @@ import filter from './filter'
 import take from './take'
 import takeWhile from './takeWhile'
 import drop from './drop'
+import dropWhile from './dropWhile'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -137,6 +138,15 @@ class Sequence<T> implements Iterable<T> {
   */
   drop(count: number) {
     return drop(this, count)
+  }
+
+  /**
+   * Return a Sequence that contains the elements from this Sequence that occur after the first element that
+   * satisfies the predicate including that element.
+   * @param predicate A function that tests if a value satisfies some condition.
+   */
+  dropWhile(predicate: (value: T, index: number) => boolean) {
+    return dropWhile(this, predicate)
   }
 }
 

@@ -76,9 +76,9 @@ TODO
 - [`flatMap`](#flatmap)
 - [`filter`](#filter)
 - [`take`](#take)
-- [`takeWhile`](#takeWhile)
+- [`takeWhile`](#takewhile)
 - [`drop`](#drop)
-- [`dropWhile`](#dropWhile)
+- [`dropWhile`](#dropwhile)
 
 ## `Collection`
 
@@ -453,3 +453,26 @@ console.log(allButFirst) // outputs: 'yz'
 ```
 
 ## `dropWhile`
+
+```typescript
+function dropWhile<T>(collection: Collection<T>, predicate: (value: T, index: number) => boolean): Sequence<T>
+(method) Sequence<T>.dropWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
+```
+
+Return a Sequence that contains the elements from the input collection that occur after the first element that satisfies the predicate including that element.
+
+Arguments: 
+* **collection**: A collection to filter.
+* **predicate**: A function that tests if a value satisfies some condition.
+
+Example:
+```typescript
+import { range } from 'iterable-sequence'
+
+const result = range(4)
+  .repeat(2) // 0, 1, 2, 3, 0, 1, 2, 3
+  .dropWhile(x => x < 3)
+  .toArray()
+
+console.log(result) // outputs: [3, 0, 1, 2, 3]
+```
