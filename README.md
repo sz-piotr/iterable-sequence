@@ -7,6 +7,16 @@
 
 A utility library for working with iterables in modern JavaScript and TypeScript.
 
+[Installation](#installation) &middot;
+[Introduction](#introduction) &middot;
+[API](#api)
+
+## Motivation
+
+With the ES2015 specification came the iteration protocol allowing us to write `for..of` loops in JavaScript. However the built in language APIs do not provide some useful features that the use of the protocol enables.
+
+The fundamental difference between working with iterables and working with arrays is that an iterable does not need an underlying data structure. This opens up the possibility for ranges, infinite Collections, data manipulation without copying entire data structures and many more.
+
 ## Core features
 
 1. *Lazy* - values are computed only when they are actually used
@@ -48,15 +58,146 @@ You can also use the provided script directly in the browser (using the followin
 </script>
 ```
 
-## Motivation
+## Introduction
 
-With the ES2015 specification came the iteration protocol allowing us to write `for..of` loops in JavaScript. However the built in language APIs do not provide some useful features that the use of the protocol enables.
+Let's explore some of the basic capabilities of the library. Probably the most important function provided is [`range`](#range).
 
-The fundamental difference between working with iterables and working with arrays is that an iterable does not need an underlying data structure. This opens up the possibility for ranges, infinite Collections, data manipulation without copying entire data structures and many more.
+Here is how you would use the [`range`](#range) function for iteration:
+```typescript
+import { range } from 'iterable-sequence'
 
-## Examples
+for(const i of range(5)) {
+  console.log(i) // outputs: 0, 1, 2, 3, 4
+}
+```
 
-TODO
+If you know python this will surely look familiar. What's interesting is that like the newer versions of python the [`range`](#range) function doesn't create an array. Instead it creates an iterable object. This means that you can easily create infinite sequences:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+for(const i of range(Infinity)) {
+  console.log(i) // outputs: 0, 1, 2, 3, 4, 5, ...
+}
+```
+
+[`range`](#range) is also versatile. You can specify the starting value and even the difference between consecutive values called `step`.
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const from1to5 = range(1, 5) // 1, 2, 3, 4
+const withStep = range(1, 7, 2) // 1, 3, 5
+```
+
+Imagine however that it didn't have that capabilities. To achive the desired result we could use the [`map`](#map) function:
+
+```typescript
+import { range, map } from 'iterable-sequence'
+
+const from1to5 = map(range(4), x => x + 1) // 1, 2, 3, 4
+const withStep = map(range(3), x => x * 2 + 1) // 1, 3, 5
+```
+
+### Sequences
+
+[`range`](#range), [`map`](#map) and most other functions of the library return a [`Sequence`](#sequence). Objects of this class have methods corresponding to the standalone functions such as [`map`](#map). Let's see this in action:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const from1to5 = range(4).map(x => x + 1) // 1, 2, 3, 4
+const withStep = range(3).map(x => x * 2 + 1) // 1, 3, 5
+```
+
+The [`Sequence`](#sequence) class is very powerful, because it can be created from many different data structures. You can use an iterable object (e.g. `range(4)`, arrays: `[1, 2, 3]`, strings: `'abc'` and many others), an array-like object (one that has numerical keys and a length property. e.g. `{ 0: 'a', 1: 'b', length: 2 }`) or even a generator function (this is what the library uses internally).
+
+A [`Sequence`](#sequence) object can also be created using the constructor:
+
+```typescript
+import { Sequence } from 'iterable-sequence'
+
+const mySequence = new Sequence('abc')
+```
+
+What else can you do with a [`Sequence`](#sequence)? How can you actually use the object? The main use case is iteration:
+
+```typescript
+import { Sequence } from 'iterable-sequence'
+
+for(const value of new Sequence('abc')) {
+  console.log(value) // outputs: 'a', 'b', 'c'
+}
+
+new Sequence('abc')
+  .forEach(x => console.log(x)) // outputs: 'a', 'b', 'c'
+```
+
+You can also convert a [`Sequence`](#sequence) to an Array or even a String. This is done using [`.toArray`](#sequencetoarray) and [`.join`](#sequencejoin):
+
+```typescript
+import { Sequence } from 'iterable-sequence'
+
+const array = new Sequence('abc').toArray()
+console.log(array) // outputs: ['a', 'b', 'c']
+
+const string = new Sequence('abc').join('-')
+console.log(string) // outputs: 'a-b-c'
+```
+
+### Manipulation
+
+So far we have only covered [`range`](#range) and [`map`](#map). This is however only a small set of the functions that the library offers. Let's look at some others.
+
+A very useful function is [`zip`](#zip). It can combine two collections[<sup>?</sup>](#collection) into a single sequence. Let's see it in action:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const zipped = range(2, 7)
+  .zip(range(6, 1, -1))
+
+// you can use destructuring on the values
+for(const [a, b] of zipped) {
+  console.log(`first: ${a}, second: ${b}`)
+}
+/* Output:
+first: 2, second: 6
+first: 3, second: 5
+first: 4, second: 3
+first: 5, second: 2
+*/
+```
+
+Sometimes you like your data so much you want even more of it. This is when [`repeat`](#repeat) and [`repeatValue`](#repeatvalue) shine. Their purpose is what the name suggest. They are used to create sequences with values repeated over and over:
+
+```typescript
+import { repeat, repeatValue } from 'iterable-sequence'
+
+for(const value of repeat([1, 2], 3)) {
+  console.log(value) // outputs: 1, 2, 1, 2, 1, 2
+}
+
+for(const value of repeatValue('a', 3)) {
+  console.log(value) // outputs: 'a', 'a', 'a'
+}
+```
+
+But sometimes you don't like your data that much. You would rather prefer to have less. Fortunately this library supports a family of filtering functions. Let's take a quick look at each of them:
+
+```typescript
+import { range } from 'iterable-sequence'
+
+const data = range(3).repeat(2) // 0, 1, 2, 0, 1, 2
+
+const notZero = data.filter(x => x !== 0) // 1, 2, 1, 2
+const beforeFirst2 = data.takeWhile(x => x !== 2) // 0, 1
+const first2AndAfter = data.dropWhile(x => x !== 2) // 2, 0, 1, 2
+```
+
+Here we can see another aspect of the library. No function performs mutation. This is crutial, because we can reuse the [`Sequence`](#sequence) we have already created.
+
+We have covered the most important features of the library. To see the list of all functions and read the detailed docs see the [API](#api) section.
 
 # API
 
@@ -67,7 +208,6 @@ TODO
 - [`Sequence.toArray`](#sequencetoarray)
 - [`Sequence.join`](#sequencejoin)
 - [`Sequence.forEach`](#sequenceforeach)
-- [`collect`](#collect)
 - [`range`](#range)
 - [`repeat`](#repeat)
 - [`repeatValue`](#repeatvalue)
@@ -79,6 +219,8 @@ TODO
 - [`takeWhile`](#takewhile)
 - [`drop`](#drop)
 - [`dropWhile`](#dropwhile)
+- `reduce` (Planned in next version)
+- `append` (Planned in next version)
 
 ## `Collection`
 
