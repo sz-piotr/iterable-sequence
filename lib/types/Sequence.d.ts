@@ -21,16 +21,21 @@ declare class Sequence<T> implements Iterable<T> {
      */
     forEach(fn: (value: T, index: number) => any): void;
     /**
+     * Return a Sequence whose elements are the elements of this Sequence repeated the specified number of times.
+     * @param times The number of times the elements are repeated. Defaults to Infinity
+     */
+    repeat(times?: number): Sequence<T>;
+    /**
      * Return a Sequence whose elements are two element arrays created from the elements of this Sequence and
      * the collection passed as arguments. The length of the sequence is equal to the length of the shorter collection.
      * @param collection A Collection to zip
      */
     zip<U>(collection: Collection<U>): Sequence<[T, U]>;
     /**
-     * Return a Sequence whose elements are the elements of this Sequence repeated the specified number of times.
-     * @param times The number of times the elements are repeated. Defaults to Infinity
+     * Return a Sequence consisting of elements from this Sequence followed by the elements from the Collection.
+     * @param collection A Collection to use when forming the resulting sequence.
      */
-    repeat(times?: number): Sequence<T>;
+    append<U>(collection: Collection<U>): Sequence<T | U>;
     /**
      * Return a new Sequence that contains the elements created from the elements of this Sequence.
      * @param fn A function that produces an element of the new Sequence using an element of the old collection.

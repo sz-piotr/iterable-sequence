@@ -1,6 +1,7 @@
 import { Collection, isIterable } from './utils'
-import zip from './zip'
 import repeat from './repeat'
+import zip from './zip'
+import append from './append'
 import map from './map'
 import flatMap from './flatMap'
 import filter from './filter'
@@ -35,7 +36,7 @@ class Sequence<T> implements Iterable<T> {
    * Return an array with the elements of this Sequence
    */
   toArray() {
-    const result = []
+    const result: T[] = []
     for(const value of this) {
       result.push(value)
     }
@@ -72,6 +73,14 @@ class Sequence<T> implements Iterable<T> {
   }
 
   /**
+   * Return a Sequence whose elements are the elements of this Sequence repeated the specified number of times.
+   * @param times The number of times the elements are repeated. Defaults to Infinity
+   */
+  repeat(times?: number) {
+    return repeat(this, times)
+  }
+
+  /**
    * Return a Sequence whose elements are two element arrays created from the elements of this Sequence and
    * the collection passed as arguments. The length of the sequence is equal to the length of the shorter collection.
    * @param collection A Collection to zip
@@ -81,11 +90,11 @@ class Sequence<T> implements Iterable<T> {
   }
 
   /**
-   * Return a Sequence whose elements are the elements of this Sequence repeated the specified number of times.
-   * @param times The number of times the elements are repeated. Defaults to Infinity
+   * Return a Sequence consisting of elements from this Sequence followed by the elements from the Collection.
+   * @param collection A Collection to use when forming the resulting sequence.
    */
-  repeat(times?: number) {
-    return repeat(this, times)
+  append<U>(collection: Collection<U>) {
+    return append(this, collection)
   }
 
   /**

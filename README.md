@@ -212,7 +212,7 @@ We have covered the most important features of the library. To see the list of a
 - [`repeat`](#repeat)
 - [`repeatValue`](#repeatvalue)
 - [`zip`](#zip)
-- `append` (Planned in next version)
+- [`append`](#append)
 - [`map`](#map)
 - [`flatMap`](#flatmap)
 - [`filter`](#filter)
@@ -342,11 +342,10 @@ import { Sequence } from 'iterable-sequence'
 
 const sequence = new Sequence('xyz')
 sequence.forEach(console.log) 
-/*
-  outputs:
-    'x', 0
-    'y', 1
-    'z', 2
+/* outputs:
+  'x', 0
+  'y', 1
+  'z', 2
 */
 ```
 
@@ -450,6 +449,29 @@ const withIndicesReversed = range(Infinity)
   .zip('abc')
   .toArray()
 console.log(withIndicesReversed) // outputs: [[0, 'a'], [1, 'b'], [2, 'c']]
+```
+
+
+## `append`
+
+```typescript
+function append<T, U>(first: Collection<T>, second: Collection<U>): Sequence<T | U>
+function Sequence<T>.append<U>(collection: Collection<U>): Sequence<T | U>
+```
+
+Return a Sequence consisting of elements from the first collection followed by the elements from the second
+Arguments:
+* **first** A Collection to use when forming the resulting sequence.
+* **second** A Collection to use when forming the resulting sequence.
+
+Example:
+```typescript
+import { append, range } from 'iterable-sequence'
+
+const combined = append('abc', range(Infinity))
+for(const x of combined) {
+  console.log(x) // outputs: 'a', 'b', 'c', 0, 1, 2, 3, ...
+}
 ```
 
 
@@ -618,6 +640,7 @@ const result = range(4)
 
 console.log(result) // outputs: [3, 0, 1, 2, 3]
 ```
+
 
 ## `reduce`
 
