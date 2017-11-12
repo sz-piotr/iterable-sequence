@@ -9,3 +9,4 @@ export { default as take } from './take';
 export { default as takeWhile } from './takeWhile';
 export { default as drop } from './drop';
 export { default as dropWhile } from './dropWhile';
+export { default as reduce } from './reduce';

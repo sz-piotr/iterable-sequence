@@ -72,5 +72,10 @@ declare class Sequence<T> implements Iterable<T> {
      * @param predicate A function that tests if a value satisfies some condition.
      */
     dropWhile(predicate: (value: T, index: number) => boolean): Sequence<T>;
+    /**
+     * Apply a function against an accumulator and each element of this Sequence to reduce it to a single value.
+     * @param fn A function that uses an accumulator and an element and reduces them to a single value.
+     */
+    reduce(fn: (accumulator: T, value: T, index: number) => T): T | undefined;
 }
 export default Sequence;
