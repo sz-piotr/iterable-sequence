@@ -8,6 +8,7 @@ import take from './take'
 import takeWhile from './takeWhile'
 import drop from './drop'
 import dropWhile from './dropWhile'
+import reduce from './reduce'
 
 class Sequence<T> implements Iterable<T> {
   [Symbol.iterator]: () => Iterator<T>
@@ -147,6 +148,13 @@ class Sequence<T> implements Iterable<T> {
    */
   dropWhile(predicate: (value: T, index: number) => boolean) {
     return dropWhile(this, predicate)
+  }
+  /**
+   * Apply a function against an accumulator and each element of this Sequence to reduce it to a single value.
+   * @param fn A function that uses an accumulator and an element and reduces them to a single value.
+   */
+  reduce(fn: (accumulator: T, value: T, index: number) => T) {
+    return reduce(this, fn)
   }
 }
 

@@ -212,6 +212,7 @@ We have covered the most important features of the library. To see the list of a
 - [`repeat`](#repeat)
 - [`repeatValue`](#repeatvalue)
 - [`zip`](#zip)
+- `append` (Planned in next version)
 - [`map`](#map)
 - [`flatMap`](#flatmap)
 - [`filter`](#filter)
@@ -219,8 +220,7 @@ We have covered the most important features of the library. To see the list of a
 - [`takeWhile`](#takewhile)
 - [`drop`](#drop)
 - [`dropWhile`](#dropwhile)
-- `reduce` (Planned in next version)
-- `append` (Planned in next version)
+- [`reduce`](#reduce)
 
 ## `Collection`
 
@@ -292,7 +292,7 @@ const sequenceFromGenerator = new Sequence(function* () {
 ## `Sequence.toArray`
 
 ```typescript
-(method) Sequence<T>.toArray(): T[]
+function Sequence<T>.toArray(): T[]
 ```
 
 Return an array with the elements of this Sequence.
@@ -308,7 +308,7 @@ console.log(values) // outputs: ['a', 'b', 'c']
 ## `Sequence.join`
 
 ```typescript
-(method) Sequence<T>.join(separator?: string): string
+function Sequence<T>.join(separator?: string): string
 ```
 
 Return a string formed by concatenating the string representation of the elements of this Sequence.
@@ -328,7 +328,7 @@ console.log(sequence.join('-')) // outputs: '1-2-3'
 ## `Sequence.forEach`
 
 ```typescript
-(method) Sequence<T>.forEach(fn: (value: T, index: number) => any): void
+function Sequence<T>.forEach(fn: (value: T, index: number) => any): void
 ```
 
 For each element of this Sequence call the supplied function with the value and index of this element.
@@ -382,7 +382,7 @@ const infinite = range(Infinity) // 0, 1, 2, 3, ...
 
 ```typescript
 function repeat<T>(collection: Collection<T>, times?: number): Sequence<T>
-(method) Sequence<T>.repeat(times?: number): Sequence<T>
+function Sequence<T>.repeat(times?: number): Sequence<T>
 ```
 
 Return a Sequence whose elements are the elements of the passed collection repeated the specified number of times.
@@ -430,7 +430,7 @@ for(const value of repeatValue(3, 5)) {
 
 ```typescript
 function zip<T, U>(a: Collection<T>, b: Collection<U>): Sequence<[T, U]>
-(method) Sequence<T>.zip<U>(collection: Collection<U>): Sequence<[T, U]>
+function Sequence<T>.zip<U>(collection: Collection<U>): Sequence<[T, U]>
 ```
 
 Return a Sequence whose elements are two element arrays created from the elements of the collections passed as arguments. The length of the sequence is equal to the length of the shorter collection.
@@ -457,7 +457,7 @@ console.log(withIndicesReversed) // outputs: [[0, 'a'], [1, 'b'], [2, 'c']]
 
 ```typescript
 function map<T, U>(collection: Collection<T>, fn: (value: T, index: number) => U): Sequence<U>
-(method) Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
+function Sequence<T>.map<U>(fn: (value: T, index: number) => U): Sequence<U>
 ```
 
 Return a Sequence that contains the elements created from the input collection elements.
@@ -481,7 +481,7 @@ console.log(lettersDashNumbers) // outputs: ['a-0', 'b-1', 'c-2']
 
 ```typescript
 function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) => Collection<U>): Sequence<U>
-(method) Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
+function Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
 ```
 
 Return a Sequence that contains the elements of flattened collections created from the input collection elements.
@@ -505,7 +505,7 @@ console.log(timesThenPlus) // outputs: [0, 3, 4, 5, 10, 7]
 
 ```typescript
 function flatMap<T, U>(collection: Collection<T>, fn: (value: T, index: number) => Collection<U>): Sequence<U>
-(method) Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
+function Sequence<T>.flatMap<U>(fn: (value: T, index: number) => Collection<U>): Sequence<U>
 ```
 
 Return a Sequence that contains the elements from the input collection that satisfy the predicate.
@@ -529,7 +529,7 @@ console.log(noFours) // outputs: [6, 5, 3]
 
 ```typescript
 function take<T>(collection: Collection<T>, count: number): Sequence<T>
-(method) Sequence<T>.take(count: number): Sequence<T>
+function Sequence<T>.take(count: number): Sequence<T>
 ```
 
 Return a Sequence that contains the first elements of the collection. The argument specifies the number of elements to take. If the length of the collection is smaller, all of the colleciton elements will be present in the resulting sequence.
@@ -553,7 +553,7 @@ console.log(firstCats) // outputs: 'Garfield and Puss and Smokey'
 
 ```typescript
 function takeWhile<T>(collection: Collection<T>, predicate: (value: T, index: number) => boolean): Sequence<T>
-(method) Sequence<T>.takeWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
+function Sequence<T>.takeWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
 ```
 
 Return a Sequence that contains the elements from the input collection that occur before the element that no longer satisfies the predicate.
@@ -577,7 +577,7 @@ console.log(firstName) // outputs: 'John'
 
 ```typescript
 function drop<T>(collection: Collection<T>, count: number): Sequence<T>
-(method) Sequence<T>.drop(count: number): Sequence<T>
+function Sequence<T>.drop(count: number): Sequence<T>
 ```
 
 Return a Sequence that contains the elements of the collection without the first elements. The argument specifies the number of elements to omit.
@@ -598,7 +598,7 @@ console.log(allButFirst) // outputs: 'yz'
 
 ```typescript
 function dropWhile<T>(collection: Collection<T>, predicate: (value: T, index: number) => boolean): Sequence<T>
-(method) Sequence<T>.dropWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
+function Sequence<T>.dropWhile(predicate: (value: T, index: number) => boolean): Sequence<T>
 ```
 
 Return a Sequence that contains the elements from the input collection that occur after the first element that satisfies the predicate including that element.
@@ -617,4 +617,29 @@ const result = range(4)
   .toArray()
 
 console.log(result) // outputs: [3, 0, 1, 2, 3]
+```
+
+## `reduce`
+
+```typescript
+function reduce<T>(collection: Collection<T>, fn: (accumulator: T, value: T, index: number) => T): T
+function Sequence<T>.reduce(fn: (accumulator: T, value: T, index: number) => T): T
+```
+
+Apply a function against an accumulator and each element of the Collection to reduce it to a single value.
+
+Arguments: 
+* **collection** A Collection whose elements will be reduces to a single value.
+* **fn** A function that uses an accumulator and an element and reduces them to a single value.
+
+Example:
+```typescript
+import { range } from 'iterable-sequence'
+
+const multiply = (a, b) => a * b
+
+const factorial = n => 
+  range(1, n + 1).reduce(multiply)
+
+console.log(factorial(3)) // outputs: 6
 ```
